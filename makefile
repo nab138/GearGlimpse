@@ -116,6 +116,7 @@ build_proj:
 	ionic capacitor build ios
 
 build:
+	@$(MAKE) build_proj
 	@xcodebuild -project ios/App/App.xcodeproj \
 				-scheme App \
 				-sdk iphoneos \
