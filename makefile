@@ -123,12 +123,16 @@ build_proj:
 	ionic capacitor add ios
 	ionic capacitor build ios
 
+pod_install:
+	cd ios/App/App && pod install
+
 build:
 	@$(MAKE) build_proj
+	@$(MAKE) pod_install
 	@xcodebuild -project ios/App/App.xcodeproj \
 				-scheme App \
 				-sdk iphoneos \
-				archive -configuration release
+				archive -configuration release \
 				-archivePath ./archive \
 				CODE_SIGNING_REQUIRED=NO \
 				AD_HOC_CODE_SIGNING_ALLOWED=YES \
