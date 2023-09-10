@@ -69,14 +69,16 @@ help:
 	$(MAKEFILE_LIST)
 
 ## Install dependencies.
-setup: \
-	pre_setup
-	install_node_dependencies \
 
 install_node_dependencies:
 	$(info Install node dependencies…)
 
 	npm ci
+	
+setup: \
+	pre_setup \
+	install_node_dependencies
+
 # check_for_homebrew \
 # update_homebrew \
 
