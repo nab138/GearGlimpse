@@ -38,8 +38,8 @@ jobs:
       - name: Build FRC iOS
         run: make build | xcpretty && exit ${PIPESTATUS[0]}
 
-      - name: Fakesign app
-        run: make fakesign
+      #   - name: Fakesign app
+      #     run: make fakesign
 
       - name: Convert to IPA
         run: make ipa
