@@ -71,7 +71,12 @@ help:
 ## Install dependencies.
 setup: \
 	pre_setup
+	install_node_dependencies \
 
+install_node_dependencies:
+	$(info Install node dependencies…)
+
+	npm ci
 # check_for_homebrew \
 # update_homebrew \
 
@@ -106,25 +111,26 @@ pull:
 
 ## -- Building --
 
+build_proj:
+	ionic capacitor add ios
+	ionic capacitor build ios
+
 build:
-	@xcodebuild -project AltStore.xcodeproj \
-				-scheme AltStore \
+	@xcodebuild -project ios/App/App.xcodeproj \
+				-scheme App \
 				-sdk iphoneos \
-				archive -archivePath ./archive \
+				archive -configuration release
+				-archivePath ./archive \
 				CODE_SIGNING_REQUIRED=NO \
 				AD_HOC_CODE_SIGNING_ALLOWED=YES \
 				CODE_SIGNING_ALLOWED=NO \
-				DEVELOPMENT_TEAM=XYZ0123456 \
-				ORG_IDENTIFIER=com.SideStore \
-				DWARF_DSYM_FOLDER_PATH="."
+				ORG_IDENTIFIER=me.nabdev \
 
 fakesign:
-	rm -rf archive.xcarchive/Products/Applications/SideStore.app/Frameworks/AltStoreCore.framework/Frameworks/
-	ldid -SAltStore/Resources/ReleaseEntitlements.plist archive.xcarchive/Products/Applications/SideStore.app/SideStore
-	ldid -SAltWidget/Resources/ReleaseEntitlements.plist archive.xcarchive/Products/Applications/SideStore.app/PlugIns/AltWidgetExtension.appex/AltWidgetExtension
+	ldid -SAltStore/Resources/ReleaseEntitlements.plist archive.xcarchive/Products/Applications/App.app/App
 
 ipa:
 	mkdir Payload
-	mkdir Payload/SideStore.app
-	cp -R archive.xcarchive/Products/Applications/SideStore.app/ Payload/SideStore.app/
-	zip -r SideStore.ipa Payload
+	mkdir Payload/FrcIos.app
+	cp -R archive.xcarchive/Products/Applications/App.app/ Payload/App.app/
+	zip -r App.ipa Payload
