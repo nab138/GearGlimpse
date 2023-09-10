@@ -13,7 +13,6 @@ import "./NT4.css";
 import { NetworkTables } from "ntcore-ts-client";
 
 const Page: React.FC = () => {
-  let test = NetworkTables.getInstanceByURI("127.0.0.1");
   const { name } = useParams<{ name: string }>();
 
   return (
@@ -48,7 +47,15 @@ const Page: React.FC = () => {
           placeholder="IP Address"
           id="ip"
         />
-        <button type="button" className="btn btn-primary">
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={() => {
+            NetworkTables.getInstanceByURI(
+              (document.getElementById("ip") as HTMLInputElement).value
+            );
+          }}
+        >
           Connect to NT
         </button>
       </IonContent>

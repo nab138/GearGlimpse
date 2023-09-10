@@ -126,9 +126,13 @@ build_proj:
 pod_install:
 	cd ios/App/App && pod install
 
+generate_assets:
+	npx --yes @capacitor/assets generate --ios --iconBackgroundColor '#eeeeee' --iconBackgroundColorDark '#222222' --splashBackgroundColor '#eeeeee' --splashBackgroundColorDark '#111111'
+
 build:
 	@$(MAKE) build_proj
 	@$(MAKE) pod_install
+	@$(MAKE) generate_assets
 	@xcodebuild -workspace ios/App/App.xcworkspace \
 				-scheme App \
 				-sdk iphoneos \
