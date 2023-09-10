@@ -74,10 +74,16 @@ install_node_dependencies:
 	$(info Install node dependencies…)
 
 	npm ci
+
+install_ionic:
+	$(info Install ionic…)
+
+	npm install -g @ionic/cli
 	
 setup: \
 	pre_setup \
-	install_node_dependencies
+	install_node_dependencies \
+	install_ionic
 
 # check_for_homebrew \
 # update_homebrew \
