@@ -129,7 +129,7 @@ pod_install:
 build:
 	@$(MAKE) build_proj
 	@$(MAKE) pod_install
-	@xcodebuild -project ios/App/App.xcodeproj \
+	@xcodebuild -workspace ios/App/App.xcworkspace \
 				-scheme App \
 				-sdk iphoneos \
 				archive -configuration release \
