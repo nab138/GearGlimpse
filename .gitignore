@@ -4,6 +4,8 @@
 /node_modules
 /.pnp
 .pnp.js
+ios
+dist
 
 # testing
 /coverage
