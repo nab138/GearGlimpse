@@ -32,6 +32,9 @@ jobs:
       - name: Setup build environment
         run: make setup
 
+      - name: Debugging with ssh
+        uses: lhotari/action-upterm@v1
+
       - name: Build FRC iOS
         run: make build | xcpretty && exit ${PIPESTATUS[0]}
 
