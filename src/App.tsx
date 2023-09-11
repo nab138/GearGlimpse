@@ -15,11 +15,6 @@ import NT4 from "./pages/NT4";
 import Home from "./pages/Home";
 import Field from "./pages/Field";
 
-import { Storage } from "@ionic/storage";
-
-const store = new Storage();
-await store.create();
-
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
 
