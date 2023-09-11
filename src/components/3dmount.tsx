@@ -37,7 +37,7 @@ loader.load(
   }
 );
 
-var directionalLight = new THREE.DirectionalLight(0xffffff);
+var directionalLight = new THREE.AmbientLight(0xffffff);
 directionalLight.position.set(0, 1, 1).normalize();
 scene.add(directionalLight);
 
