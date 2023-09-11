@@ -143,9 +143,6 @@ build:
 				CODE_SIGNING_ALLOWED=NO \
 				ORG_IDENTIFIER=me.nabdev \
 
-fakesign:
-	ldid -SAltStore/Resources/ReleaseEntitlements.plist archive.xcarchive/Products/Applications/App.app/App
-
 ipa:
 	mkdir Payload
 	mkdir Payload/FrcIos.app

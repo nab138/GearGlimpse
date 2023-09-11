@@ -21,9 +21,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install dependencies
-        run: brew install ldid
-
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1.4.1
         with:
@@ -37,9 +34,6 @@ jobs:
 
       - name: Build FRC iOS
         run: make build | xcpretty && exit ${PIPESTATUS[0]}
-
-      #   - name: Fakesign app
-      #     run: make fakesign
 
       - name: Convert to IPA
         run: make ipa
