@@ -12,8 +12,6 @@ const camera = new THREE.PerspectiveCamera(
 camera.position.z = 5;
 
 const scene = new THREE.Scene();
-const geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
-const material = new THREE.MeshNormalMaterial();
 
 // Add a gltf model
 const loader = new GLTFLoader();
@@ -47,13 +45,16 @@ renderer.setAnimationLoop(animation);
 
 const clock = new THREE.Clock();
 const cameraControls = new OrbitControls(camera, renderer.domElement);
+cameraControls.maxPolarAngle = Math.PI/2; 
 document.body.appendChild(renderer.domElement);
+
+
 
 // animation
 
 function animation(time: number) {
   const delta = clock.getDelta();
-  const hasControlsUpdated = cameraControls.update(delta);
+  cameraControls.update(delta);
 
   renderer.render(scene, camera);
 }
