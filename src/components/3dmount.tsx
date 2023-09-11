@@ -18,7 +18,7 @@ const material = new THREE.MeshNormalMaterial();
 // Add a gltf model
 const loader = new GLTFLoader();
 loader.load(
-  "src/Field3d_2023.glb",
+  "./Field3d_2023.glb",
   (gltf) => {
     let field = gltf.scene;
     scene.add(field);
