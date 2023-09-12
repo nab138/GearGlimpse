@@ -35,6 +35,7 @@ import { homeOutline, mapOutline, settingsOutline } from "ionicons/icons";
 
 /* Theme variables */
 import "./theme/variables.css";
+import "./App.css"
 
 setupIonicReact();
 

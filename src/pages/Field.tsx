@@ -1,6 +1,7 @@
 import {
   IonContent,
   IonHeader,
+  IonIcon,
   IonPage,
   IonTitle,
   IonToolbar,
@@ -19,6 +20,8 @@ const camera = new THREE.PerspectiveCamera(
   1000
 );
 
+import { arrowUpOutline, chevronUpOutline, settingsOutline } from "ionicons/icons";
+
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
@@ -30,6 +33,12 @@ const Page: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonTitle>3D Field</IonTitle>
+          {/* Settings and Dismiss Button Icons */}
+          <IonTitle  slot="end">
+            <IonIcon className="field-buttons" icon={settingsOutline} />
+            <IonIcon className="field-buttons" icon={chevronUpOutline} />
+          </IonTitle>
+
         </IonToolbar>
       </IonHeader>
       <IonContent>

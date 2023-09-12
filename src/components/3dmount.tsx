@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { ScreenOrientation } from "@awesome-cordova-plugins/screen-orientation";
 
 // init
 const camera = new THREE.PerspectiveCamera(
@@ -9,7 +10,8 @@ const camera = new THREE.PerspectiveCamera(
   0.01,
   100
 );
-camera.position.z = 5;
+camera.position.z = 10;
+camera.position.y = 5;
 
 const scene = new THREE.Scene();
 
@@ -46,6 +48,8 @@ renderer.setAnimationLoop(animation);
 const clock = new THREE.Clock();
 const cameraControls = new OrbitControls(camera, renderer.domElement);
 cameraControls.maxPolarAngle = Math.PI/2; 
+cameraControls.maxDistance = 20;
+cameraControls.minDistance = 0.5;
 document.body.appendChild(renderer.domElement);
 
 
@@ -74,6 +78,10 @@ function resize() {
 }
 
 window.addEventListener("resize", resize);
+// On orientation change, resize the renderer
+ScreenOrientation.onChange().subscribe(() => {
+  resize();
+});
 
 export function mount(container: HTMLElement | null) {
   if (container) {
