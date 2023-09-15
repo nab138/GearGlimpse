@@ -1,3 +1,9 @@
 .field-buttons {
-    padding: 0 20px;
+    padding: 0 10px;
+}
+.field-header {
+    position: absolute;
+}
+body {
+    overflow: hidden;
 }

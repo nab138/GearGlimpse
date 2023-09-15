@@ -50,6 +50,7 @@ const cameraControls = new OrbitControls(camera, renderer.domElement);
 cameraControls.maxPolarAngle = Math.PI/2; 
 cameraControls.maxDistance = 20;
 cameraControls.minDistance = 0.5;
+cameraControls.saveState();
 document.body.appendChild(renderer.domElement);
 
 
@@ -67,20 +68,23 @@ function resize() {
   const container = renderer.domElement.parentNode as HTMLElement | null;
 
   if (container) {
-    const width = container?.offsetWidth;
-    const height = container?.offsetHeight;
+    // Use entire window
+    const width = window.innerWidth;
+    const height = window.innerHeight;
 
     renderer.setSize(width, height);
 
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
   }
+
+  cameraControls.reset();
 }
 
 window.addEventListener("resize", resize);
 // On orientation change, resize the renderer
 ScreenOrientation.onChange().subscribe(() => {
-  resize();
+  setTimeout(resize, 2);
 });
 
 export function mount(container: HTMLElement | null) {
