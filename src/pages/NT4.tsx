@@ -3,6 +3,7 @@ import {
   IonButtons,
   IonContent,
   IonHeader,
+  IonInput,
   IonMenuButton,
   IonPage,
   IonTitle,
@@ -11,9 +12,26 @@ import {
 import { useParams } from "react-router";
 import "./NT4.css";
 import { NetworkTables } from "ntcore-ts-client";
+import storage from "../storage";
+import { useEffect, useState } from "react";
 
 const Page: React.FC = () => {
   const { name } = useParams<{ name: string }>();
+
+  let rendered = false;
+
+  const [ip, setIp] = useState("");
+  useEffect(() => {
+     async function getIP() {
+      if((await storage().keys()).includes("ip")) {
+         const ip = await storage().get("ip") as string;
+         setIp(ip);
+      }
+    }
+     getIP();
+     rendered = true;
+  }, [])
+  
   return (
     <IonPage>
       <IonHeader>
@@ -23,11 +41,15 @@ const Page: React.FC = () => {
       </IonHeader>
       <IonContent>
         <div className="nt4-container">
-          <input
+          <IonInput
             type="text"
             placeholder="RoboRIO IP"
             id="ip"
-            onInput={() => {}}
+            value={ip}
+            onInput={() => {
+              setIp((document.getElementById("ip") as HTMLInputElement).value);
+              storage().set("ip", (document.getElementById("ip") as HTMLInputElement).value);
+            }}
           />
           <IonButton
             className="button"

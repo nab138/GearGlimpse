@@ -9,3 +9,7 @@
 .nt4-container > .button {
   margin: 20px 5px;
 }
+
+#ip {
+  text-align: left;
+}

@@ -9,6 +9,10 @@ import {
   IonToolbar,
   createAnimation,
   type Animation,
+  IonModal,
+  IonLabel,
+  IonItem,
+  IonInput,
 } from "@ionic/react";
 import { useParams } from "react-router";
 import "./Field.css";
@@ -25,7 +29,8 @@ const camera = new THREE.PerspectiveCamera(
 );
 
 import { arrowUpOutline, chevronUpOutline, settingsOutline } from "ionicons/icons";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-component-lib/interfaces";
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -39,6 +44,24 @@ const Page: React.FC = () => {
   const inAnimation = useRef<Animation | null>(null);
 
   const header = useRef<HTMLIonHeaderElement | null>(null);
+
+  const modal = useRef<HTMLIonModalElement>(null);
+  const input = useRef<HTMLIonInputElement>(null);
+
+  const [message, setMessage] = useState(
+    'This modal example uses triggers to automatically open a modal when the button is clicked.'
+  );
+
+  function confirm() {
+    modal.current?.dismiss(input.current?.value, 'confirm');
+  }
+
+  function onWillDismiss(ev: CustomEvent<OverlayEventDetail>) {
+    if (ev.detail.role === 'confirm') {
+      setMessage(`Hello, ${ev.detail.data}!`);
+    }
+  }
+  
   useEffect(() => {
     if (outAnimation.current === null) {
       outToolAnimation.current = createAnimation()
@@ -86,7 +109,7 @@ const Page: React.FC = () => {
           <IonTitle>3D Field</IonTitle>
           {/* Settings and Dismiss Button Icons */}
           <IonButtons slot="primary">
-            <IonButton fill="clear">
+            <IonButton id="field-settings" fill="clear">
               <IonIcon className="field-buttons" icon={settingsOutline} />
             </IonButton>
           </IonButtons>
@@ -110,6 +133,27 @@ const Page: React.FC = () => {
       </IonHeader>
       <IonContent>
         <ThreeComponent />
+        <IonModal ref={modal} trigger="field-settings" onWillDismiss={(ev) => onWillDismiss(ev)}>
+          <IonHeader>
+            <IonToolbar>
+              <IonButtons slot="start">
+                <IonButton onClick={() => modal.current?.dismiss()}>Cancel</IonButton>
+              </IonButtons>
+              <IonTitle>Welcome</IonTitle>
+              <IonButtons slot="end">
+                <IonButton strong={true} onClick={() => confirm()}>
+                  Confirm
+                </IonButton>
+              </IonButtons>
+            </IonToolbar>
+          </IonHeader>
+          <IonContent className="ion-padding">
+            <IonItem>
+              <IonLabel position="stacked">Enter your name</IonLabel>
+              <IonInput ref={input} type="text" placeholder="Your name" />
+            </IonItem>
+          </IonContent>
+        </IonModal>
       </IonContent>
     </IonPage>
   );
