@@ -99,24 +99,24 @@ const Page: React.FC = () => {
     if (outAnimation.current === null) {
       outToolAnimation.current = createAnimation()
         .addElement(header.current!)
-        .duration(100)
+        .duration(130)
         .fromTo("transform", "translateY(0)", "translateY(-100%)");
 
       outAnimation.current = createAnimation()
         .addElement(document.querySelector("ion-tab-bar")!)
-        .duration(100)
+        .duration(130)
         .fromTo("transform", "translateY(0)", "translateY(100%)")
         .addAnimation(outToolAnimation.current);
     }
     if (inAnimation.current === null) {
       inToolAnimation.current = createAnimation()
         .addElement(header.current!)
-        .duration(100)
+        .duration(120)
         .fromTo("transform", "translateY(-100%)", "translateY(0)");
 
       inAnimation.current = createAnimation()
         .addElement(document.querySelector("ion-tab-bar")!)
-        .duration(100)
+        .duration(120)
         .fromTo("transform", "translateY(100%)", "translateY(0)")
         .addAnimation(inToolAnimation.current);
     }
