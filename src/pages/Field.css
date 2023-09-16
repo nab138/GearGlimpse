@@ -1,9 +1,13 @@
 .field-buttons {
-    padding: 0 10px;
+  padding: 0 10px;
 }
 .field-header {
-    position: absolute;
+  position: absolute;
 }
 body {
-    overflow: hidden;
+  overflow: hidden;
+}
+
+.modal-title {
+  text-align: center;
 }

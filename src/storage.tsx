@@ -1,11 +1,12 @@
-import { Storage } from '@ionic/storage';
+import { Storage } from "@ionic/storage";
 
 const store = new Storage();
+let hasInit = false;
 
-export async function init(){
-    await store.create();
-}
-
-export default function getStorage(): Storage{
-    return store;
+export default function getStorage(): Storage {
+  if (!hasInit) {
+    store.create();
+    hasInit = true;
+  }
+  return store;
 }

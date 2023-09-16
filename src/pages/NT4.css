@@ -3,11 +3,11 @@
   margin-top: 20px;
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: 0 20px;
 }
 
 .nt4-container > .button {
-  margin: 20px 5px;
+  margin: 10px 0;
 }
 
 #ip {

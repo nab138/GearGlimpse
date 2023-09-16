@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { ScreenOrientation } from "@awesome-cordova-plugins/screen-orientation";
+import storage from "../storage";
 
 // init
 const camera = new THREE.PerspectiveCamera(
@@ -14,28 +15,35 @@ camera.position.z = 10;
 camera.position.y = 5;
 
 const scene = new THREE.Scene();
+let field: THREE.Group<THREE.Object3DEventMap>;
 
 // Add a gltf model
 const loader = new GLTFLoader();
-loader.load(
-  "./Field3d_2023.glb",
-  (gltf) => {
-    let field = gltf.scene;
-    scene.add(field);
-    field.traverse((node: any) => {
-      let mesh = node as THREE.Mesh; // Traverse function returns Object3d or Mesh
-      if (mesh.isMesh && mesh.material instanceof THREE.MeshStandardMaterial) {
-        let material = mesh.material as THREE.MeshStandardMaterial;
-        material.metalness = 0;
-        material.roughness = 1;
-      }
-    });
-  },
-  undefined,
-  (error) => {
-    console.error(error);
-  }
-);
+export async function loadModel(model: string) {
+  loader.load(
+    model,
+    (gltf) => {
+      scene.remove(field);
+      field = gltf.scene;
+      scene.add(field);
+      field.traverse((node: any) => {
+        let mesh = node as THREE.Mesh; // Traverse function returns Object3d or Mesh
+        if (
+          mesh.isMesh &&
+          mesh.material instanceof THREE.MeshStandardMaterial
+        ) {
+          let material = mesh.material as THREE.MeshStandardMaterial;
+          material.metalness = 0;
+          material.roughness = 1;
+        }
+      });
+    },
+    undefined,
+    (error) => {
+      console.error(error);
+    }
+  );
+}
 
 var directionalLight = new THREE.AmbientLight(0xffffff);
 directionalLight.position.set(0, 1, 1).normalize();
@@ -47,13 +55,11 @@ renderer.setAnimationLoop(animation);
 
 const clock = new THREE.Clock();
 const cameraControls = new OrbitControls(camera, renderer.domElement);
-cameraControls.maxPolarAngle = Math.PI/2; 
+cameraControls.maxPolarAngle = Math.PI / 2;
 cameraControls.maxDistance = 20;
 cameraControls.minDistance = 0.5;
 cameraControls.saveState();
 document.body.appendChild(renderer.domElement);
-
-
 
 // animation
 
@@ -87,8 +93,9 @@ ScreenOrientation.onChange().subscribe(() => {
   setTimeout(resize, 2);
 });
 
-export function mount(container: HTMLElement | null) {
+export async function mount(container: HTMLElement | null) {
   if (container) {
+    await loadModel((await storage().get("field")) ?? "Field3d_2023.glb");
     container.insertBefore(renderer.domElement, container.firstChild);
   } else {
     renderer.domElement.remove();

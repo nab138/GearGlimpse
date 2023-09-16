@@ -1,37 +1,23 @@
 import {
   IonButton,
-  IonButtons,
   IonContent,
   IonHeader,
   IonInput,
-  IonMenuButton,
   IonPage,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { useParams } from "react-router";
 import "./NT4.css";
 import { NetworkTables } from "ntcore-ts-client";
 import storage from "../storage";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const Page: React.FC = () => {
-  const { name } = useParams<{ name: string }>();
-
-  let rendered = false;
-
   const [ip, setIp] = useState("");
-  useEffect(() => {
-     async function getIP() {
-      if((await storage().keys()).includes("ip")) {
-         const ip = await storage().get("ip") as string;
-         setIp(ip);
-      }
-    }
-     getIP();
-     rendered = true;
-  }, [])
-  
+  (async () => {
+    setIp(await storage().get("ip"));
+  })();
+
   return (
     <IonPage>
       <IonHeader>
@@ -48,7 +34,10 @@ const Page: React.FC = () => {
             value={ip}
             onInput={() => {
               setIp((document.getElementById("ip") as HTMLInputElement).value);
-              storage().set("ip", (document.getElementById("ip") as HTMLInputElement).value);
+              storage().set(
+                "ip",
+                (document.getElementById("ip") as HTMLInputElement).value
+              );
             }}
           />
           <IonButton
