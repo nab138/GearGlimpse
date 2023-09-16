@@ -25,7 +25,13 @@ import { chevronUpOutline, settingsOutline } from "ionicons/icons";
 import { useEffect, useRef, useState } from "react";
 import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-component-lib/interfaces";
 import ThreeComponent from "../components/ThreeComponent";
-import { loadModel } from "../components/3dmount";
+import {
+  loadFieldModel,
+  loadRobotModel,
+  setRobotPosition,
+} from "../components/3dmount";
+import { NetworkTablesTopic, NetworkTablesTypeInfos } from "ntcore-ts-client";
+import { subscribe } from "../networktables";
 
 const Page: React.FC = () => {
   const outToolAnimation = useRef<Animation | null>(null);
@@ -41,6 +47,12 @@ const Page: React.FC = () => {
   const robotInput = useRef<HTMLIonSelectElement>(null);
   const robotKeyInput = useRef<HTMLIonInputElement>(null);
 
+  let robotTopic: NetworkTablesTopic<number[]> | null | undefined = null;
+
+  function moveRobotCallback(value: number[]): void {
+    if (value == null) return;
+    setRobotPosition(value[0], value[1], value[2]);
+  }
   const [field, setField] = useState("2023");
   (async () => {
     let field = await storage().get("field");
@@ -68,8 +80,13 @@ const Page: React.FC = () => {
       await storage().set("robotKey", "/SmartDashboard/Field/Robot");
       robotKey = "/SmartDashboard/Field/Robot";
     }
+
     setRobotKey(robotKey);
-    console.log(robotKey);
+    robotTopic = subscribe(
+      robotKey,
+      NetworkTablesTypeInfos.kDoubleArray,
+      moveRobotCallback
+    );
   })();
 
   function confirm() {
@@ -86,12 +103,19 @@ const Page: React.FC = () => {
   function onWillDismiss(ev: CustomEvent<OverlayEventDetail>) {
     if (ev.detail.role === "confirm") {
       storage().set("field", `Field3d_${ev.detail.data.field}.glb`);
-      loadModel(`Field3d_${ev.detail.data.field}.glb`);
+      loadFieldModel(`Field3d_${ev.detail.data.field}.glb`);
       setField(ev.detail.data.field);
       storage().set("robot", `Robot_${ev.detail.data.robot}.glb`);
+      loadRobotModel(`Robot_${ev.detail.data.robot}.glb`);
       setRobot(ev.detail.data.robot);
       storage().set("robotKey", ev.detail.data.key);
       setRobotKey(ev.detail.data.key);
+      robotTopic?.unsubscribeAll();
+      robotTopic = subscribe(
+        robotKey,
+        NetworkTablesTypeInfos.kDoubleArray,
+        moveRobotCallback
+      );
     }
   }
 
@@ -125,8 +149,8 @@ const Page: React.FC = () => {
   function bringToolsBack(e: MouseEvent) {
     // IF e is in the top or bottom 15% of the screen, don't bring the tools back
     if (
-      e.clientY > window.innerHeight * 0.15 &&
-      e.clientY < window.innerHeight * 0.85
+      e.clientY > window.innerHeight * 0.16 &&
+      e.clientY < window.innerHeight * 0.84
     )
       return;
     inAnimation.current?.play();
@@ -175,7 +199,7 @@ const Page: React.FC = () => {
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-      <IonContent>
+      <IonContent className="field-page">
         <ThreeComponent />
         <IonModal
           ref={modal}
@@ -197,8 +221,8 @@ const Page: React.FC = () => {
               </IonButtons>
             </IonToolbar>
           </IonHeader>
-          <IonContent className="ion-padding">
-            <IonItem>
+          <IonContent className="ion-padding field-settings">
+            <IonItem lines="full">
               <IonSelect
                 ref={fieldInput}
                 interface="popover"
@@ -207,13 +231,17 @@ const Page: React.FC = () => {
                 value={field}
               >
                 {fields.map((field) => (
-                  <IonSelectOption key={field} value={field}>
+                  <IonSelectOption
+                    className="ion-no-padding"
+                    key={field}
+                    value={field}
+                  >
                     {field}
                   </IonSelectOption>
                 ))}
               </IonSelect>
             </IonItem>
-            <IonItem>
+            <IonItem lines="full">
               <IonSelect
                 ref={robotInput}
                 interface="popover"
@@ -222,13 +250,17 @@ const Page: React.FC = () => {
                 value={robot}
               >
                 {robots.map((robot) => (
-                  <IonSelectOption key={robot} value={robot}>
+                  <IonSelectOption
+                    className="ion-no-padding"
+                    key={robot}
+                    value={robot}
+                  >
                     {robot}
                   </IonSelectOption>
                 ))}
               </IonSelect>
             </IonItem>
-            <IonItem>
+            <IonItem lines="full">
               <IonInput
                 ref={robotKeyInput}
                 type="text"

@@ -1,5 +1,5 @@
 .nt4-container {
-  text-align: center;
+  text-align: left;
   margin-top: 20px;
   display: flex;
   flex-direction: column;
@@ -12,4 +12,12 @@
 
 #ip {
   text-align: left;
+}
+
+.checkbox {
+  width: fit-content;
+}
+
+.nt4-item {
+  margin-bottom: 16px;
 }
