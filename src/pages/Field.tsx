@@ -21,11 +21,33 @@ import storage from "../storage";
 const fields = ["2023", "2022"];
 const robots = ["KitBot", "Duck Bot", "Crab Bot"];
 
+export const robotProps = {
+  KitBot: {
+    rotations: [
+      { axis: "x", degrees: -90 },
+      { axis: "y", degrees: -90 },
+    ],
+    position: [-0.12, 0, 3.15],
+  } as RobotConfig,
+  "Duck Bot": {
+    rotations: [
+      { axis: "x", degrees: -90 },
+      { axis: "y", degrees: -90 },
+    ],
+    position: [0, 0, 0],
+  } as RobotConfig,
+  "Crab Bot": {
+    rotations: [{ axis: "x", degrees: -90 }],
+    position: [0, 0, 0.045],
+  } as RobotConfig,
+};
+
 import { chevronUpOutline, settingsOutline } from "ionicons/icons";
 import { useEffect, useRef, useState } from "react";
 import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-component-lib/interfaces";
 import ThreeComponent from "../components/ThreeComponent";
 import {
+  RobotConfig,
   loadFieldModel,
   loadRobotModel,
   setRobotPosition,
@@ -106,7 +128,10 @@ const Page: React.FC = () => {
       loadFieldModel(`Field3d_${ev.detail.data.field}.glb`);
       setField(ev.detail.data.field);
       storage().set("robot", `Robot_${ev.detail.data.robot}.glb`);
-      loadRobotModel(`Robot_${ev.detail.data.robot}.glb`);
+      loadRobotModel(
+        `Robot_${ev.detail.data.robot}.glb`,
+        robotProps[ev.detail.data.robot as keyof typeof robotProps]
+      );
       setRobot(ev.detail.data.robot);
       storage().set("robotKey", ev.detail.data.key);
       setRobotKey(ev.detail.data.key);

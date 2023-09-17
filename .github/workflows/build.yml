@@ -1,11 +1,11 @@
-name: Build FRC iOS
+name: Build GearGlimpse
 on:
   #  Workflow dispatch
   workflow_dispatch:
 
 jobs:
   build:
-    name: Build and upload FRC iOS
+    name: Build and upload GearGlimpse
     concurrency:
       group: ${{ github.ref }}
       cancel-in-progress: true
@@ -29,17 +29,14 @@ jobs:
       - name: Setup build environment
         run: make setup
 
-      #   - name: Debugging with ssh
-      #     uses: lhotari/action-upterm@v1
-
-      - name: Build FRC iOS
+      - name: Build GearGlimpse
         run: make build | xcpretty && exit ${PIPESTATUS[0]}
 
       - name: Convert to IPA
         run: make ipa
 
-      - name: Upload App.ipa Artifact
+      - name: Upload GearGlimpse.ipa Artifact
         uses: actions/upload-artifact@v3.1.0
         with:
-          name: App.ipa
-          path: App.ipa
+          name: GearGlimpse.ipa
+          path: GearGlimpse.ipa

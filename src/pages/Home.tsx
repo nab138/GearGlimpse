@@ -20,7 +20,8 @@ const Page: React.FC = () => {
       <IonContent>
         {/* Centered gretting text */}
         <div className="home-container">
-          <h1>Welcome to FRC-iOS</h1>
+          <h1>Welcome to GearGlimpse</h1>
+          <p>Documentation coming soon™ (or maybe not)</p>
         </div>
       </IonContent>
     </IonPage>

@@ -145,6 +145,6 @@ build:
 
 ipa:
 	mkdir Payload
-	mkdir Payload/FrcIos.app
+	mkdir Payload/GearGlimpse.app
 	cp -R archive.xcarchive/Products/Applications/App.app/ Payload/App.app/
-	zip -r App.ipa Payload
+	zip -r GearGlimpse.ipa Payload

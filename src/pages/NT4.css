@@ -21,3 +21,7 @@
 .nt4-item {
   margin-bottom: 16px;
 }
+
+.nt4-header-Connected {
+  --background: #65af68;
+}

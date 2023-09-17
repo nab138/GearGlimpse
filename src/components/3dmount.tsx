@@ -3,6 +3,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { ScreenOrientation } from "@awesome-cordova-plugins/screen-orientation";
 import storage from "../storage";
+import { robotProps } from "../pages/Field";
 
 // init
 const camera = new THREE.PerspectiveCamera(
@@ -11,8 +12,8 @@ const camera = new THREE.PerspectiveCamera(
   0.01,
   100
 );
-camera.position.z = 10;
-camera.position.y = 5;
+camera.position.z = -15;
+camera.position.y = 10;
 
 const scene = new THREE.Scene();
 let field: THREE.Group<THREE.Object3DEventMap>;
@@ -45,13 +46,18 @@ export async function loadFieldModel(model: string) {
   );
 }
 
-export async function loadRobotModel(model: string) {
+export async function loadRobotModel(model: string, robotConfig: RobotConfig) {
   loader.load(
     model,
     (gltf) => {
       scene.remove(robot);
-      robot = gltf.scene;
-      robot.rotateOnAxis(new THREE.Vector3(1, 0, 0), -Math.PI / 2);
+      let robotInner = gltf.scene;
+      robotInner.rotation.setFromQuaternion(
+        getQuaternionFromRotSeq(robotConfig.rotations)
+      );
+      robotInner.position.set(...robotConfig.position);
+      robot = new THREE.Group();
+      robot.add(robotInner);
       // Make temporarily invisible
       robot.visible = false;
       scene.add(robot);
@@ -77,7 +83,37 @@ export async function loadRobotModel(model: string) {
 export function setRobotPosition(x: number, y: number, rotation: number) {
   robot.visible = true;
   robot.position.set(-(x - 8.25), 0, y - 4);
-  robot.rotation.z = ((rotation - 90) * Math.PI) / 180;
+  robot.rotation.y = (rotation * Math.PI) / 180;
+}
+
+export interface RobotConfig {
+  position: [number, number, number];
+  rotations: RobotConfigRotation[];
+}
+
+export interface RobotConfigRotation {
+  axis: "x" | "y" | "z";
+  degrees: number;
+}
+/** Converts a rotation sequence to a quaternion. */
+function getQuaternionFromRotSeq(
+  rotations: RobotConfigRotation[]
+): THREE.Quaternion {
+  console.log(rotations);
+  let quaternion = new THREE.Quaternion();
+  rotations.forEach((rotation) => {
+    let axis = new THREE.Vector3(0, 0, 0);
+    if (rotation.axis == "x") axis.setX(1);
+    if (rotation.axis == "y") axis.setY(1);
+    if (rotation.axis == "z") axis.setZ(1);
+    quaternion.premultiply(
+      new THREE.Quaternion().setFromAxisAngle(
+        axis,
+        (rotation.degrees * Math.PI) / 180
+      )
+    );
+  });
+  return quaternion;
 }
 
 var directionalLight = new THREE.AmbientLight(0xffffff);
@@ -131,7 +167,12 @@ ScreenOrientation.onChange().subscribe(() => {
 export async function mount(container: HTMLElement | null) {
   if (container) {
     await loadFieldModel((await storage().get("field")) ?? "Field3d_2023.glb");
-    await loadRobotModel((await storage().get("robot")) ?? "Robot_KitBot.glb");
+    let robot = (await storage().get("robot")) ?? "Robot_KitBot.glb";
+    let robotName = robot?.split("_")[1].split(".")[0];
+    await loadRobotModel(
+      robot,
+      robotProps[robotName as keyof typeof robotProps]
+    );
     container.insertBefore(renderer.domElement, container.firstChild);
   } else {
     renderer.domElement.remove();

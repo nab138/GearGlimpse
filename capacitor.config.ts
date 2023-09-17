@@ -1,8 +1,8 @@
 import { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
-  appId: "me.nabdev.frcios",
-  appName: "FRC-iOS",
+  appId: "me.nabdev.gearglimpse",
+  appName: "GearGlimpse",
   webDir: "dist",
   server: {
     androidScheme: "https",

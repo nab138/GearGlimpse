@@ -39,8 +39,14 @@ export function subscribe<T extends NetworkTablesTypes>(
   return topic;
 }
 
-export function unsubscribe(topic: NetworkTablesTopic<any>) {
-  topic.unsubscribeAll();
+export function connectionStatus() {
+  if (client == null) {
+    return "Disconnected";
+  }
+  if (client.isRobotConnected()) {
+    return "Connected";
+  }
+  return "Disconnected";
 }
 
 function getRobotAddress(team: number) {

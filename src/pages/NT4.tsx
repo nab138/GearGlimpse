@@ -13,7 +13,11 @@ import "./NT4.css";
 import { NetworkTables } from "ntcore-ts-client";
 import storage from "../storage";
 import { useState } from "react";
-import { connectURI, connectTeamNumber } from "../networktables";
+import {
+  connectURI,
+  connectTeamNumber,
+  connectionStatus,
+} from "../networktables";
 
 const Page: React.FC = () => {
   const [useAddress, setUseAddress] = useState(false);
@@ -21,6 +25,11 @@ const Page: React.FC = () => {
     setUseAddress(await storage().get("useAddress"));
   })();
 
+  const [connected, setConnected] = useState("Disconnected");
+
+  setInterval(() => {
+    setConnected(connectionStatus);
+  }, 50);
   const [ip, setIp] = useState("");
   (async () => {
     setIp(await storage().get("ip"));
@@ -43,9 +52,9 @@ const Page: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle>NT4 Setup</IonTitle>
+      <IonHeader className={"nt4-header-" + connected}>
+        <IonToolbar className={"nt4-header-" + connected}>
+          <IonTitle>NT4 Setup - {connected}</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>
