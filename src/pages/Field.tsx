@@ -16,7 +16,7 @@ import {
   IonInput,
 } from "@ionic/react";
 import "./Field.css";
-import storage from "../storage";
+import storage from "../utils/storage";
 
 const fields = ["2023", "2022"];
 const robots = ["KitBot", "Duck Bot", "Crab Bot"];
@@ -53,7 +53,7 @@ import {
   setRobotPosition,
 } from "../components/3dmount";
 import { NetworkTablesTopic, NetworkTablesTypeInfos } from "ntcore-ts-client";
-import { subscribe } from "../networktables";
+import { subscribe } from "../utils/networktables";
 
 const Page: React.FC = () => {
   const outToolAnimation = useRef<Animation | null>(null);

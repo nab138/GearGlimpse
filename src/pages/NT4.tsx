@@ -10,14 +10,15 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import "./NT4.css";
-import { NetworkTables } from "ntcore-ts-client";
-import storage from "../storage";
+
+import storage from "../utils/storage";
 import { useState } from "react";
 import {
   connectURI,
   connectTeamNumber,
   connectionStatus,
-} from "../networktables";
+  getEntryList,
+} from "../utils/networktables";
 
 const Page: React.FC = () => {
   const [useAddress, setUseAddress] = useState(false);
@@ -54,7 +55,7 @@ const Page: React.FC = () => {
     <IonPage>
       <IonHeader className={"nt4-header-" + connected}>
         <IonToolbar className={"nt4-header-" + connected}>
-          <IonTitle>NT4 Setup - {connected}</IonTitle>
+          <IonTitle>NT4 - {connected}</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>

@@ -1,8 +1,6 @@
 import {
   NetworkTables,
-  NetworkTablesTopic,
   NetworkTablesTypeInfo,
-  NetworkTablesTypeInfos,
   NetworkTablesTypes,
 } from "ntcore-ts-client";
 
@@ -14,6 +12,7 @@ export function connectURI(address: string, port: number) {
   } else {
     client = NetworkTables.getInstanceByURI(address, port);
   }
+  //loadAllTopics();
 }
 
 export function connectTeamNumber(teamNumber: number, port: number) {
@@ -22,6 +21,7 @@ export function connectTeamNumber(teamNumber: number, port: number) {
   } else {
     client = NetworkTables.getInstanceByTeam(teamNumber, port);
   }
+  //loadAllTopics();
 }
 
 export function subscribe<T extends NetworkTablesTypes>(
@@ -31,7 +31,6 @@ export function subscribe<T extends NetworkTablesTypes>(
 ) {
   let topic = client?.createTopic<T>(key, typeInfo);
 
-  // Subscribe and immediately call the callback with the current value
   topic?.subscribe(callback, true, {
     periodic: 0.001,
   });
@@ -49,6 +48,30 @@ export function connectionStatus() {
   return "Disconnected";
 }
 
+export function getEntryList() {
+  return client?.client.getTopicNames();
+}
+
 function getRobotAddress(team: number) {
   return "roborio-".concat(team.toString(), "-frc.local");
 }
+
+// function loadAllTopics() {
+//   let topic = client?.createTopic<string>("/", NetworkTablesTypeInfos.kString);
+
+//   topic?.subscribe(
+//     () => {},
+//     false,
+//     {
+//       periodic: 1,
+//       topicsonly: true,
+//       prefix: true,
+//     },
+//     undefined,
+//     false
+//   );
+
+//   setTimeout(() => {
+//     topic?.unsubscribeAll();
+//   }, 1200);
+// }

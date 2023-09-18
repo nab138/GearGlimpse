@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { ScreenOrientation } from "@awesome-cordova-plugins/screen-orientation";
-import storage from "../storage";
+import storage from "../utils/storage";
 import { robotProps } from "../pages/Field";
 
 // init
@@ -99,7 +99,6 @@ export interface RobotConfigRotation {
 function getQuaternionFromRotSeq(
   rotations: RobotConfigRotation[]
 ): THREE.Quaternion {
-  console.log(rotations);
   let quaternion = new THREE.Quaternion();
   rotations.forEach((rotation) => {
     let axis = new THREE.Vector3(0, 0, 0);

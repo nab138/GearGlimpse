@@ -9,7 +9,6 @@ import { useParams } from "react-router";
 import "./Home.css";
 
 const Page: React.FC = () => {
-  const { name } = useParams<{ name: string }>();
   return (
     <IonPage>
       <IonHeader>
