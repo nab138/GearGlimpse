@@ -7,6 +7,7 @@ import {
 } from "@ionic/react";
 import { useParams } from "react-router";
 import "./Home.css";
+import { book, home } from "ionicons/icons";
 
 const Page: React.FC = () => {
   return (
@@ -27,4 +28,10 @@ const Page: React.FC = () => {
   );
 };
 
-export default Page;
+export default {
+  path: "/docs",
+  displayName: "Docs",
+  icon: book,
+  tab: "docs",
+  component: Page,
+};

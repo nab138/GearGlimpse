@@ -16,12 +16,19 @@ ion-tab-button {
   }
 }
 
+.active-tab::before {
+  background-color: var(--ion-color-primary);
+}
+
 ion-tab-bar {
   position: absolute;
   bottom: 0;
   width: 100%;
 }
 
-.popover-content {
-  height: 200px;
+.more-tab-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+
 }

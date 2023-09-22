@@ -1,0 +1,18 @@
+.remove-icon {
+    color: red;
+}
+
+.add-icon {
+    color: green;
+}
+
+.bulk-select-group {
+    padding: 0 !important;
+    height: fit-content;
+    margin: 0 !important;
+}
+
+.bulk-select-selected {
+    margin-bottom: 16px !important;
+    border-radius: 10px !important;
+}

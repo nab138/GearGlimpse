@@ -3,7 +3,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { ScreenOrientation } from "@awesome-cordova-plugins/screen-orientation";
 import storage from "../utils/storage";
-import { robotProps } from "../pages/Field";
+import { robotProps } from "../pages/tabs/Field";
 
 // init
 const camera = new THREE.PerspectiveCamera(

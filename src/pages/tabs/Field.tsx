@@ -16,10 +16,23 @@ import {
   IonInput,
 } from "@ionic/react";
 import "./Field.css";
-import storage from "../utils/storage";
+import storage from "../../utils/storage";
 
 const fields = ["2023", "2022"];
 const robots = ["KitBot", "Duck Bot", "Crab Bot"];
+
+import { chevronUpOutline, map, settingsOutline } from "ionicons/icons";
+import { useEffect, useRef, useState } from "react";
+import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-component-lib/interfaces";
+import ThreeComponent from "../../components/ThreeComponent";
+import {
+  RobotConfig,
+  loadFieldModel,
+  loadRobotModel,
+  setRobotPosition,
+} from "../../components/3dmount";
+import { NetworkTablesTopic, NetworkTablesTypeInfos } from "ntcore-ts-client";
+import { subscribe } from "../../utils/networktables";
 
 export const robotProps = {
   KitBot: {
@@ -42,18 +55,6 @@ export const robotProps = {
   } as RobotConfig,
 };
 
-import { chevronUpOutline, settingsOutline } from "ionicons/icons";
-import { useEffect, useRef, useState } from "react";
-import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-component-lib/interfaces";
-import ThreeComponent from "../components/ThreeComponent";
-import {
-  RobotConfig,
-  loadFieldModel,
-  loadRobotModel,
-  setRobotPosition,
-} from "../components/3dmount";
-import { NetworkTablesTopic, NetworkTablesTypeInfos } from "ntcore-ts-client";
-import { subscribe } from "../utils/networktables";
 
 const Page: React.FC = () => {
   const outToolAnimation = useRef<Animation | null>(null);
@@ -192,7 +193,7 @@ const Page: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader className="field-header" ref={header} mode="ios">
+      <IonHeader className="field-header" ref={header} >
         <IonToolbar>
           <IonTitle>3D Field</IonTitle>
           {/* Settings and Dismiss Button Icons */}
@@ -300,4 +301,10 @@ const Page: React.FC = () => {
   );
 };
 
-export default Page;
+export default {
+  path: "/field",
+  displayName: "3D Field",
+  icon: map,
+  tab: "field",
+  component: Page,
+};

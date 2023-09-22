@@ -1,5 +1,9 @@
 import {
   IonButton,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardTitle,
   IonCheckbox,
   IonContent,
   IonHeader,
@@ -12,117 +16,154 @@ import {
 import "./NT4.css";
 
 import storage from "../utils/storage";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   connectURI,
   connectTeamNumber,
   connectionStatus,
-  getEntryList,
 } from "../utils/networktables";
+import BulkSelect from "../components/BulkSelect";
+import { displayNames } from "./tabs";
 
-const Page: React.FC = () => {
+interface NT4Props {
+  setTabs: (items: string[]) => void;
+  selectedTabs: string[];
+}
+
+const Page: React.FC<NT4Props> = (props: NT4Props) => {
   const [useAddress, setUseAddress] = useState(false);
-  (async () => {
-    setUseAddress(await storage().get("useAddress"));
-  })();
-
   const [connected, setConnected] = useState("Disconnected");
-
-  setInterval(() => {
-    setConnected(connectionStatus);
-  }, 50);
   const [ip, setIp] = useState("");
-  (async () => {
-    setIp(await storage().get("ip"));
-  })();
-
   const [teamNumber, setTeamNumber] = useState("");
-  (async () => {
-    setTeamNumber(await storage().get("teamNumber"));
-  })();
-
   const [port, setPort] = useState("5810");
-  (async () => {
-    let port = await storage().get("port");
-    if (port == undefined) {
-      await storage().set("port", "5810");
-      port = "5810";
-    }
-    setPort(port);
-  })();
+
+  useEffect(() => {
+    (async () => {
+      setUseAddress(await storage().get("useAddress"));
+    })();
+  
+    
+  
+    setInterval(() => {
+      setConnected(connectionStatus);
+    }, 50);
+    
+    (async () => {
+      setIp(await storage().get("ip"));
+    })();
+  
+    
+    (async () => {
+      setTeamNumber(await storage().get("teamNumber"));
+    })();
+  
+    
+    (async () => {
+      let port = await storage().get("port");
+      if (port == undefined) {
+        await storage().set("port", "5810");
+        port = "5810";
+      }
+      setPort(port);
+    })();
+  }, []);
+  
+  
 
   return (
     <IonPage>
-      <IonHeader className={"nt4-header-" + connected}>
-        <IonToolbar className={"nt4-header-" + connected}>
-          <IonTitle>NT4 - {connected}</IonTitle>
+      <IonHeader>
+        <IonToolbar>
+          <IonTitle>Settings</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <div className="nt4-container">
-          <IonItem className="ion-no-padding nt4-item">
-            <IonInput
-              type={useAddress ? "text" : "number"}
-              placeholder={useAddress ? "Address" : "Team Number"}
-              id="ip"
-              value={useAddress ? ip : teamNumber}
-              onInput={() => {
-                storage().set(
-                  useAddress ? "ip" : "teamNumber",
-                  (document.getElementById("ip") as HTMLInputElement).value
-                );
-              }}
-            />
-          </IonItem>
-          <IonItem className="ion-no-padding nt4-item">
-            <IonInput
-              type="text"
-              placeholder="Port"
-              id="port"
-              value={port}
-              onInput={() => {
-                storage().set(
-                  "port",
-                  (document.getElementById("port") as HTMLInputElement).value
-                );
-              }}
-            />
-          </IonItem>
-          <IonCheckbox
-            id="useAddress"
-            className="checkbox"
-            labelPlacement="end"
-            checked={useAddress}
-            onIonChange={() => {
-              setUseAddress(
-                (document.getElementById("useAddress") as HTMLInputElement)
-                  .checked
-              );
-              storage().set(
-                "useAddress",
-                (document.getElementById("useAddress") as HTMLInputElement)
-                  .checked
-              );
-            }}
-          >
-            Use Manual Address
-          </IonCheckbox>
-          <IonButton
-            className="button"
-            onClick={() => {
-              let ip = (document.getElementById("ip") as HTMLInputElement)
-                .value;
-              let port = (document.getElementById("port") as HTMLInputElement)
-                .value;
-              if (useAddress) {
-                connectURI(ip, parseInt(port));
-              } else {
-                connectTeamNumber(parseInt(ip), parseInt(port));
-              }
-            }}
-          >
-            Connect to NT
-          </IonButton>
+        <div className="nt4-container" style={{
+          marginBottom: "40px"
+        }}>
+          <IonCard className={"nt4-settings-" + connected}>
+            <IonCardHeader>
+                <IonCardTitle>NT4 - {connected}</IonCardTitle>
+            </IonCardHeader>
+            <IonCardContent>
+              <IonItem className="ion-no-padding nt4-item">
+                <IonInput
+                                className="nt4-input"
+                  type={useAddress ? "text" : "number"}
+                  placeholder={useAddress ? "Address" : "Team Number"}
+                  id="ip"
+                  value={useAddress ? ip : teamNumber}
+                  onInput={() => {
+                    storage().set(
+                      useAddress ? "ip" : "teamNumber",
+                      (document.getElementById("ip") as HTMLInputElement).value
+                    );
+                  }}
+                />
+              </IonItem>
+              <IonItem className="ion-no-padding nt4-item">
+                <IonInput
+                className="nt4-input"
+                  type="text"
+                  placeholder="Port"
+                  id="port"
+                  value={port}
+                  onInput={() => {
+                    storage().set(
+                      "port",
+                      (document.getElementById("port") as HTMLInputElement).value
+                    );
+                  }}
+                />
+              </IonItem>
+              <IonCheckbox
+                id="useAddress"
+                className="checkbox"
+                labelPlacement="end"
+                checked={useAddress}
+                onIonChange={() => {
+                  setUseAddress(
+                    (document.getElementById("useAddress") as HTMLInputElement)
+                      .checked
+                  );
+                  storage().set(
+                    "useAddress",
+                    (document.getElementById("useAddress") as HTMLInputElement)
+                      .checked
+                  );
+                }}
+              >
+                Use Manual Address
+              </IonCheckbox>
+              <br/>
+              <IonButton
+                className="button"
+                onClick={() => {
+                  let ip = (document.getElementById("ip") as HTMLInputElement)
+                    .value;
+                  let port = (document.getElementById("port") as HTMLInputElement)
+                    .value;
+                  if (useAddress) {
+                    connectURI(ip, parseInt(port));
+                  } else {
+                    connectTeamNumber(parseInt(ip), parseInt(port));
+                  }
+                }}
+              >
+                Connect to NT
+              </IonButton>
+            </IonCardContent>
+          </IonCard>
+         <IonCard className="tabs-card">
+          <IonCardHeader>
+            <IonCardTitle>Tabs</IonCardTitle>
+          </IonCardHeader>
+          <IonCardContent>
+            <BulkSelect onChange={(newTabs: string[]) => {
+              storage().set("tabs", newTabs);
+            }}items={displayNames} selectedItems={props.selectedTabs} setSelectedItems={props.setTabs} maxItems={4} minItems={1}/>
+          </IonCardContent>
+         </IonCard>
         </div>
       </IonContent>
     </IonPage>

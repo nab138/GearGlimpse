@@ -18,10 +18,15 @@
   width: fit-content;
 }
 
+
 .nt4-item {
   margin-bottom: 16px;
 }
 
-.nt4-header-Connected {
-  --background: #65af68;
+.nt4-input {
+  margin-left: 16px;
+}
+
+.nt4-settings-Connected {
+  --background: #72e67899;
 }
