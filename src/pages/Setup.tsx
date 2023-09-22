@@ -11,6 +11,7 @@ import {
   IonItem,
   IonPage,
   IonTitle,
+  IonToggle,
   IonToolbar,
 } from "@ionic/react";
 import "./Setup.css";
@@ -95,6 +96,11 @@ const Page: React.FC<SetupProps> = (props: SetupProps) => {
                       useAddress ? "ip" : "teamNumber",
                       (document.getElementById("ip") as HTMLInputElement).value
                     );
+                    if(useAddress){
+                      setIp((document.getElementById("ip") as HTMLInputElement).value)
+                    } else {
+                      setTeamNumber((document.getElementById("ip") as HTMLInputElement).value)
+                    }
                   }}
                 />
               </IonItem>
@@ -114,7 +120,7 @@ const Page: React.FC<SetupProps> = (props: SetupProps) => {
                   }}
                 />
               </IonItem>
-              <IonCheckbox
+              <IonToggle
                 id="useAddress"
                 className="checkbox"
                 labelPlacement="end"
@@ -132,7 +138,7 @@ const Page: React.FC<SetupProps> = (props: SetupProps) => {
                 }}
               >
                 Use Manual Address
-              </IonCheckbox>
+              </IonToggle>
               <br />
               <IonButton
                 className="button"
