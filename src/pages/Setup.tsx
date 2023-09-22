@@ -13,7 +13,7 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import "./NT4.css";
+import "./Setup.css";
 
 import storage from "../utils/storage";
 import { useEffect, useState } from "react";
@@ -25,12 +25,12 @@ import {
 import BulkSelect from "../components/BulkSelect";
 import { displayNames } from "./tabs";
 
-interface NT4Props {
+interface SetupProps {
   setTabs: (items: string[]) => void;
   selectedTabs: string[];
 }
 
-const Page: React.FC<NT4Props> = (props: NT4Props) => {
+const Page: React.FC<SetupProps> = (props: SetupProps) => {
   const [useAddress, setUseAddress] = useState(false);
   const [connected, setConnected] = useState("Disconnected");
   const [ip, setIp] = useState("");
@@ -41,23 +41,19 @@ const Page: React.FC<NT4Props> = (props: NT4Props) => {
     (async () => {
       setUseAddress(await storage().get("useAddress"));
     })();
-  
-    
-  
+
     setInterval(() => {
       setConnected(connectionStatus);
     }, 50);
-    
+
     (async () => {
       setIp(await storage().get("ip"));
     })();
-  
-    
+
     (async () => {
       setTeamNumber(await storage().get("teamNumber"));
     })();
-  
-    
+
     (async () => {
       let port = await storage().get("port");
       if (port == undefined) {
@@ -67,28 +63,29 @@ const Page: React.FC<NT4Props> = (props: NT4Props) => {
       setPort(port);
     })();
   }, []);
-  
-  
 
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Settings</IonTitle>
+          <IonTitle>Setup</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <div className="nt4-container" style={{
-          marginBottom: "40px"
-        }}>
-          <IonCard className={"nt4-settings-" + connected}>
+        <div
+          className="setup-container"
+          style={{
+            marginBottom: "40px",
+          }}
+        >
+          <IonCard className={"nt4-settings-" + connected.toLowerCase()}>
             <IonCardHeader>
-                <IonCardTitle>NT4 - {connected}</IonCardTitle>
+              <IonCardTitle>NT4 - {connected}</IonCardTitle>
             </IonCardHeader>
             <IonCardContent>
               <IonItem className="ion-no-padding nt4-item">
                 <IonInput
-                                className="nt4-input"
+                  className="nt4-input"
                   type={useAddress ? "text" : "number"}
                   placeholder={useAddress ? "Address" : "Team Number"}
                   id="ip"
@@ -103,7 +100,7 @@ const Page: React.FC<NT4Props> = (props: NT4Props) => {
               </IonItem>
               <IonItem className="ion-no-padding nt4-item">
                 <IonInput
-                className="nt4-input"
+                  className="nt4-input"
                   type="text"
                   placeholder="Port"
                   id="port"
@@ -111,7 +108,8 @@ const Page: React.FC<NT4Props> = (props: NT4Props) => {
                   onInput={() => {
                     storage().set(
                       "port",
-                      (document.getElementById("port") as HTMLInputElement).value
+                      (document.getElementById("port") as HTMLInputElement)
+                        .value
                     );
                   }}
                 />
@@ -135,14 +133,15 @@ const Page: React.FC<NT4Props> = (props: NT4Props) => {
               >
                 Use Manual Address
               </IonCheckbox>
-              <br/>
+              <br />
               <IonButton
                 className="button"
                 onClick={() => {
                   let ip = (document.getElementById("ip") as HTMLInputElement)
                     .value;
-                  let port = (document.getElementById("port") as HTMLInputElement)
-                    .value;
+                  let port = (
+                    document.getElementById("port") as HTMLInputElement
+                  ).value;
                   if (useAddress) {
                     connectURI(ip, parseInt(port));
                   } else {
@@ -150,20 +149,27 @@ const Page: React.FC<NT4Props> = (props: NT4Props) => {
                   }
                 }}
               >
-                Connect to NT
+                {connected == "Disconnected" ? "C" : "Rec"}onnect to NT
               </IonButton>
             </IonCardContent>
           </IonCard>
-         <IonCard className="tabs-card">
-          <IonCardHeader>
-            <IonCardTitle>Tabs</IonCardTitle>
-          </IonCardHeader>
-          <IonCardContent>
-            <BulkSelect onChange={(newTabs: string[]) => {
-              storage().set("tabs", newTabs);
-            }}items={displayNames} selectedItems={props.selectedTabs} setSelectedItems={props.setTabs} maxItems={4} minItems={1}/>
-          </IonCardContent>
-         </IonCard>
+          <IonCard className="tabs-card">
+            <IonCardHeader>
+              <IonCardTitle>Tabs</IonCardTitle>
+            </IonCardHeader>
+            <IonCardContent>
+              <BulkSelect
+                onChange={(newTabs: string[]) => {
+                  storage().set("tabs", newTabs);
+                }}
+                items={displayNames}
+                selectedItems={props.selectedTabs}
+                setSelectedItems={props.setTabs}
+                maxItems={4}
+                minItems={1}
+              />
+            </IonCardContent>
+          </IonCard>
         </div>
       </IonContent>
     </IonPage>

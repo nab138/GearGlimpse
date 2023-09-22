@@ -55,7 +55,6 @@ export const robotProps = {
   } as RobotConfig,
 };
 
-
 const Page: React.FC = () => {
   const outToolAnimation = useRef<Animation | null>(null);
   const outAnimation = useRef<Animation | null>(null);
@@ -76,41 +75,45 @@ const Page: React.FC = () => {
     if (value == null) return;
     setRobotPosition(value[0], value[1], value[2]);
   }
+
   const [field, setField] = useState("2023");
-  (async () => {
-    let field = await storage().get("field");
-    if (field == undefined) {
-      await storage().set("field", "Field3d_2023.glb");
-      field = "Field3d_2023.glb";
-    }
-    setField(field.split("_")[1].split(".")[0]);
-  })();
-
   const [robot, setRobot] = useState("KitBot");
-  (async () => {
-    let robot = await storage().get("robot");
-    if (robot == undefined) {
-      await storage().set("robot", "Robot_KitBot.glb");
-      robot = "Robot_KitBot.glb";
-    }
-    setRobot(robot.split("_")[1].split(".")[0]);
-  })();
-
   const [robotKey, setRobotKey] = useState("");
-  (async () => {
-    let robotKey = await storage().get("robotKey");
-    if (robotKey == undefined) {
-      await storage().set("robotKey", "/SmartDashboard/Field/Robot");
-      robotKey = "/SmartDashboard/Field/Robot";
-    }
 
-    setRobotKey(robotKey);
-    robotTopic = subscribe(
-      robotKey,
-      NetworkTablesTypeInfos.kDoubleArray,
-      moveRobotCallback
-    );
-  })();
+  useEffect(() => {
+    (async () => {
+      let field = await storage().get("field");
+      if (field == undefined) {
+        await storage().set("field", "Field3d_2023.glb");
+        field = "Field3d_2023.glb";
+      }
+      setField(field.split("_")[1].split(".")[0]);
+    })();
+
+    (async () => {
+      let robot = await storage().get("robot");
+      if (robot == undefined) {
+        await storage().set("robot", "Robot_KitBot.glb");
+        robot = "Robot_KitBot.glb";
+      }
+      setRobot(robot.split("_")[1].split(".")[0]);
+    })();
+
+    (async () => {
+      let robotKey = await storage().get("robotKey");
+      if (robotKey == undefined) {
+        await storage().set("robotKey", "/SmartDashboard/Field/Robot");
+        robotKey = "/SmartDashboard/Field/Robot";
+      }
+
+      setRobotKey(robotKey);
+      robotTopic = subscribe(
+        robotKey,
+        NetworkTablesTypeInfos.kDoubleArray,
+        moveRobotCallback
+      );
+    })();
+  }, []);
 
   function confirm() {
     modal.current?.dismiss(
@@ -173,7 +176,6 @@ const Page: React.FC = () => {
   }, [header]);
 
   function bringToolsBack(e: MouseEvent) {
-    // IF e is in the top or bottom 15% of the screen, don't bring the tools back
     if (
       e.clientY > window.innerHeight * 0.16 &&
       e.clientY < window.innerHeight * 0.84
@@ -193,7 +195,7 @@ const Page: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader className="field-header" ref={header} >
+      <IonHeader className="field-header" ref={header}>
         <IonToolbar>
           <IonTitle>3D Field</IonTitle>
           {/* Settings and Dismiss Button Icons */}

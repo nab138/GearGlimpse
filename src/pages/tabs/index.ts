@@ -1,18 +1,12 @@
-import Field from "./Field"
-import Graph from "./Graph"
-import Home from "./Home"
-import Swerve from "./Swerve"
+import Field from "./Field";
+import Graph from "./Graph";
+import Docs from "./Docs";
+import Swerve from "./Swerve";
 
-export default [
-    Field,
-    Graph,
-    Home,
-    Swerve
-]
+/**
+ * When adding new tabs, just import them here and add them to this array. No other changes are needed.
+ */
+let allTabs = [Field, Graph, Docs, Swerve];
 
-export const displayNames = [
-    Field.displayName,
-    Graph.displayName,
-    Home.displayName,
-    Swerve.displayName
-]
+export default allTabs;
+export const displayNames = allTabs.map((tab) => tab.displayName);

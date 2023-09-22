@@ -45,11 +45,11 @@ export function connectionStatus() {
   if (client.isRobotConnected()) {
     return "Connected";
   }
-  return "Disconnected";
+  return "Searching";
 }
 
 export function getEntryList() {
-  return client?.client.getTopicNames();
+  //return client?.client.getTopicNames();
 }
 
 function getRobotAddress(team: number) {

@@ -1,13 +1,8 @@
-.nt4-container {
+.setup-container {
   text-align: left;
-  margin-top: 20px;
   display: flex;
   flex-direction: column;
-  padding: 0 20px;
-}
-
-.nt4-container > .button {
-  margin: 10px 0;
+  padding: 0 10px;
 }
 
 #ip {
@@ -18,7 +13,6 @@
   width: fit-content;
 }
 
-
 .nt4-item {
   margin-bottom: 16px;
 }
@@ -27,6 +21,10 @@
   margin-left: 16px;
 }
 
-.nt4-settings-Connected {
+.nt4-settings-connected {
   --background: #72e67899;
+}
+
+.nt4-settings-searching {
+  --background: #e6e67899;
 }

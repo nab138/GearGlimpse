@@ -1,7 +1,5 @@
 import {
   IonApp,
-  IonButton,
-  IonContent,
   IonIcon,
   IonLabel,
   IonRouterOutlet,
@@ -9,12 +7,10 @@ import {
   IonTabButton,
   IonTabs,
   setupIonicReact,
-  useIonPopover,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { Redirect, Route } from "react-router-dom";
-import NT4 from "./pages/NT4";
-import Home from "./pages/tabs/Home";
+import Setup from "./pages/Setup";
 import tabs from "./pages/tabs";
 
 /* Core CSS required for Ionic components to work properly */
@@ -33,7 +29,7 @@ import "@ionic/react/css/text-transformation.css";
 import "@ionic/react/css/flex-utils.css";
 import "@ionic/react/css/display.css";
 
-import { ellipse, ellipsisHorizontal, ellipsisVertical, home, map, settings } from "ionicons/icons";
+import { settings } from "ionicons/icons";
 
 /* Theme variables */
 import "./theme/variables.css";
@@ -56,16 +52,21 @@ const App: React.FC = () => {
       }
       setAddedTabs(tabs);
     })();
-  }, [])
-  
+  }, []);
 
   return (
     <IonApp>
       <IonReactRouter>
         <IonTabs className="tab-bar">
           <IonRouterOutlet>
-            <Redirect exact path="/" to="/home" />
-            <Route path="/nt4" render={() => <NT4 setTabs={setAddedTabs} selectedTabs={addedTabs}/>} exact={true} />
+            <Redirect exact path="/" to="/docs" />
+            <Route
+              path="/setup"
+              render={() => (
+                <Setup setTabs={setAddedTabs} selectedTabs={addedTabs} />
+              )}
+              exact={true}
+            />
             {
               // Add a route for every tab in the tabs array
               tabs.map((tab) => (
@@ -79,8 +80,7 @@ const App: React.FC = () => {
             }
           </IonRouterOutlet>
 
-          <IonTabBar slot="bottom" >
-
+          <IonTabBar slot="bottom">
             {
               // Add a tab for every tab in the tabs array
               addedTabs.map((tabString) => {
@@ -89,16 +89,18 @@ const App: React.FC = () => {
                 if (tab == undefined) {
                   return <></>;
                 }
-                return <IonTabButton key={tab.path} tab={tab.tab} href={tab.path}>
-                  <IonIcon icon={tab.icon} />
-                  <IonLabel>{tab.displayName}</IonLabel>
-                </IonTabButton>
-            })
+                return (
+                  <IonTabButton key={tab.path} tab={tab.tab} href={tab.path}>
+                    <IonIcon icon={tab.icon} />
+                    <IonLabel>{tab.displayName}</IonLabel>
+                  </IonTabButton>
+                );
+              })
             }
 
-            <IonTabButton tab="nt4" href="/nt4">
+            <IonTabButton tab="setup" href="/setup">
               <IonIcon icon={settings} />
-              <IonLabel>Settings</IonLabel>
+              <IonLabel>Setup</IonLabel>
             </IonTabButton>
           </IonTabBar>
         </IonTabs>
