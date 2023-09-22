@@ -64,7 +64,7 @@ const Page: React.FC = () => {
       let keys = await storage().get("graphKeys");
       if (keys == undefined) {
         await storage().set("graphKeys", [""]);
-        keys = ["Field3d_2023.glb"];
+        keys = [""];
       }
       setKeys(keys);
     })();
