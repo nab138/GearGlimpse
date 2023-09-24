@@ -136,6 +136,7 @@ const Page: React.FC = () => {
     let allKeys = [...lastConfirmedLeftKeys, ...lastConfirmedRightKeys];
 
     allKeys.forEach((key) => {
+      if (key == "") return;
       let topic = getClient()?.createTopic<number>(
         key,
         NetworkTablesTypeInfos.kDouble
