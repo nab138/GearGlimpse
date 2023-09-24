@@ -1,5 +1,7 @@
 .graph-container {
   text-align: center;
+  height: 100%;
+  padding-bottom: 50px;
 }
 
 .graph-buttons {

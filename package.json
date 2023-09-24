@@ -29,7 +29,7 @@
     "chart.js": "^4.4.0",
     "cordova-plugin-screen-orientation": "^3.0.3",
     "ionicons": "^7.0.0",
-    "ntcore-ts-client": "^0.2.1",
+    "ntcore-ts-client": "github:nab138/ntcore-ts-client",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",

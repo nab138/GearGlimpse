@@ -81,6 +81,7 @@ export async function loadRobotModel(model: string, robotConfig: RobotConfig) {
 }
 
 export function setRobotPosition(x: number, y: number, rotation: number) {
+  if (robot == undefined) return;
   robot.visible = true;
   robot.position.set(-(x - 8.25), 0, y - 4);
   robot.rotation.y = (rotation * Math.PI) / 180;

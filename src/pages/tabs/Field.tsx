@@ -32,7 +32,8 @@ import {
   setRobotPosition,
 } from "../../components/3dmount";
 import { NetworkTablesTopic, NetworkTablesTypeInfos } from "ntcore-ts-client";
-import { subscribe } from "../../utils/networktables";
+import { listenerStates, subscribe } from "../../utils/networktables";
+import NTSelect from "../../components/NTSelect";
 
 export const robotProps = {
   KitBot: {
@@ -67,18 +68,23 @@ const Page: React.FC = () => {
   const modal = useRef<HTMLIonModalElement>(null);
   const fieldInput = useRef<HTMLIonSelectElement>(null);
   const robotInput = useRef<HTMLIonSelectElement>(null);
-  const robotKeyInput = useRef<HTMLIonInputElement>(null);
 
-  let robotTopic: NetworkTablesTopic<number[]> | null | undefined = null;
+  const [connected, setConnected] = useState("Disconnected");
+  listenerStates.push(setConnected);
 
   function moveRobotCallback(value: number[]): void {
     if (value == null) return;
     setRobotPosition(value[0], value[1], value[2]);
   }
 
+  const [robotTopic, setRobotTopic] = useState<
+    NetworkTablesTopic<number[]> | null | undefined
+  >(null);
+
   const [field, setField] = useState("2023");
   const [robot, setRobot] = useState("KitBot");
   const [robotKey, setRobotKey] = useState("");
+  const [unconfirmedRobotKey, setUnconfirmedRobotKey] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -106,12 +112,9 @@ const Page: React.FC = () => {
         robotKey = "/SmartDashboard/Field/Robot";
       }
 
+      console.log(robotKey);
       setRobotKey(robotKey);
-      robotTopic = subscribe(
-        robotKey,
-        NetworkTablesTypeInfos.kDoubleArray,
-        moveRobotCallback
-      );
+      setUnconfirmedRobotKey(robotKey);
     })();
   }, []);
 
@@ -120,7 +123,6 @@ const Page: React.FC = () => {
       {
         field: fieldInput.current?.value,
         robot: robotInput.current?.value,
-        key: robotKeyInput.current?.value,
       },
       "confirm"
     );
@@ -137,16 +139,23 @@ const Page: React.FC = () => {
         robotProps[ev.detail.data.robot as keyof typeof robotProps]
       );
       setRobot(ev.detail.data.robot);
-      storage().set("robotKey", ev.detail.data.key);
-      setRobotKey(ev.detail.data.key);
-      robotTopic?.unsubscribeAll();
-      robotTopic = subscribe(
+      storage().set("robotKey", unconfirmedRobotKey);
+      setRobotKey(unconfirmedRobotKey);
+    } else {
+      setUnconfirmedRobotKey(robotKey);
+    }
+  }
+
+  useEffect(() => {
+    robotTopic?.unsubscribeAll();
+    setRobotTopic(
+      subscribe(
         robotKey,
         NetworkTablesTypeInfos.kDoubleArray,
         moveRobotCallback
-      );
-    }
-  }
+      )
+    );
+  }, [robotKey, connected]);
 
   useEffect(() => {
     if (outAnimation.current === null) {
@@ -289,11 +298,11 @@ const Page: React.FC = () => {
               </IonSelect>
             </IonItem>
             <IonItem lines="full">
-              <IonInput
-                ref={robotKeyInput}
-                type="text"
-                placeholder="Robot Key"
-                value={robotKey}
+              <NTSelect
+                initialValue={robotKey}
+                onSelectionChange={(key) => {
+                  setUnconfirmedRobotKey(key);
+                }}
               />
             </IonItem>
           </IonContent>

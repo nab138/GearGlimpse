@@ -1,6 +1,10 @@
 import {
   IonButton,
   IonButtons,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardTitle,
   IonContent,
   IonHeader,
   IonIcon,
@@ -28,6 +32,13 @@ import {
   Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
+import { NetworkTablesTopic, NetworkTablesTypeInfos } from "ntcore-ts-client";
+import {
+  getClient,
+  listenerStates,
+  subscribe,
+} from "../../utils/networktables";
+import NTSelect from "../../components/NTSelect";
 
 ChartJS.register(
   CategoryScale,
@@ -39,44 +50,141 @@ ChartJS.register(
   Legend
 );
 
-export const options = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: "bottom" as const,
-    },
-    title: {
-      display: false,
-      text: "Chart.js Line Chart",
-    },
-  },
-};
+const topics: NetworkTablesTopic<number>[] = [];
 
 const Page: React.FC = () => {
   const modal = useRef<HTMLIonModalElement>(null);
 
-  let [keys, setKeys] = useState<string[]>([""]);
-  let [lastConfirmedKeys, setLastConfirmedKeys] = useState<string[]>([""]);
-  let [data, setData] = useState<any>({});
+  const [connected, setConnected] = useState("Disconnected");
+  listenerStates.push(setConnected);
+
+  let [leftKeys, setLeftKeys] = useState<string[]>([""]);
+  let [rightKeys, setRightKeys] = useState<string[]>([""]);
+  let [lastConfirmedLeftKeys, setLastConfirmedLeftKeys] = useState<string[]>([
+    "",
+  ]);
+  let [lastConfirmedRightKeys, setLastConfirmedRightKeys] = useState<string[]>([
+    "",
+  ]);
+  let [data, setData] = useState<any>([]);
+
+  const options = {
+    maintainAspectRatio: false,
+    responsive: true,
+    animation: {
+      duration: 0,
+    },
+    scales: {
+      x: {
+        type: "linear" as const,
+        // Prevent from getting too zoomed out, just start sliding when we're at 10% of the scale
+      },
+      y: {
+        type: "linear" as const,
+        display: leftKeys.length > 0,
+        position: "left" as const,
+      },
+      y1: {
+        type: "linear" as const,
+        display: rightKeys.length > 0,
+        position: "right" as const,
+        grid: {
+          drawOnChartArea: false,
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        position: "bottom" as const,
+      },
+      title: {
+        display: false,
+        text: "Chart.js Line Chart",
+      },
+    },
+  };
 
   useEffect(() => {
     (async () => {
-      let keys = await storage().get("graphKeys");
-      if (keys == undefined) {
-        await storage().set("graphKeys", [""]);
-        keys = [""];
+      let leftKeys = await storage().get("graphKeysLeft");
+      if (leftKeys == undefined) {
+        await storage().set("graphKeysLeft", [""]);
+        leftKeys = [""];
       }
-      setKeys(keys);
+      setLeftKeys(leftKeys);
+      setLastConfirmedLeftKeys(leftKeys);
+
+      let rightKeys = await storage().get("graphKeysRight");
+      if (rightKeys == undefined) {
+        await storage().set("graphKeysright", [""]);
+        rightKeys = [""];
+      }
+      setRightKeys(rightKeys);
+      setLastConfirmedRightKeys(rightKeys);
     })();
   }, []);
 
+  useEffect(() => {
+    console.log("Rebuilding Graph");
+    setData([]);
+    data = [];
+    topics.forEach((topic) => {
+      topic.unsubscribeAll();
+    });
+    topics.splice(0, topics.length);
+
+    let allKeys = [...lastConfirmedLeftKeys, ...lastConfirmedRightKeys];
+
+    allKeys.forEach((key) => {
+      let topic = getClient()?.createTopic<number>(
+        key,
+        NetworkTablesTypeInfos.kDouble
+      );
+      if (topic != null && topic != undefined) topics.push(topic);
+    });
+
+    let tempData = [] as any[];
+    topics.forEach((topic) => {
+      let color = randomRGB();
+      let dataset = {
+        label: topic.name,
+        data: [] as { x: number; y: number }[],
+        backgroundColor: color,
+        borderColor: color,
+        pointRadius: 0,
+        yAxisID: rightKeys.includes(topic.name) ? "y1" : "y",
+      };
+      let index = tempData.length;
+      tempData.push(dataset);
+
+      topic.subscribe(
+        (value) => {
+          if (topic.lastChangedTime == null || value == null) return;
+          // From microseconds to seconds
+          dataset.data.push({ x: topic.lastChangedTime * 0.000001, y: value });
+          let temp = [...data];
+          temp[index] = dataset;
+          setData(temp);
+          data = temp;
+        },
+        true,
+        {
+          periodic: 0.05,
+        }
+      );
+    });
+    setData(tempData);
+  }, [lastConfirmedLeftKeys, lastConfirmedRightKeys, connected]);
+
   function onWillDismiss(event: CustomEvent<OverlayEventDetail>) {
     if (event.detail.role == "confirm") {
-      storage().set("graphKeys", keys);
-      setLastConfirmedKeys(keys);
+      storage().set("graphKeysLeft", leftKeys);
+      setLastConfirmedLeftKeys(leftKeys);
+      storage().set("graphKeysRight", rightKeys);
+      setLastConfirmedRightKeys(rightKeys);
     } else {
-      console.log("not confirm");
-      setKeys(lastConfirmedKeys);
+      setLeftKeys(lastConfirmedLeftKeys);
+      setRightKeys(lastConfirmedRightKeys);
     }
   }
 
@@ -102,15 +210,7 @@ const Page: React.FC = () => {
           <Line
             options={options}
             data={{
-              labels: ["0", "1", "2", "3", "4", "5"],
-              datasets: [
-                {
-                  label: "Test Dataset",
-                  data: [0, 20, 20, 60, 80, 100],
-                  borderColor: "rgb(255, 99, 132)",
-                  backgroundColor: "rgba(255, 99, 132, 0.5)",
-                },
-              ],
+              datasets: data,
             }}
           />
         </div>
@@ -134,38 +234,83 @@ const Page: React.FC = () => {
               </IonButtons>
             </IonToolbar>
           </IonHeader>
-          <IonContent className="ion-padding field-settings">
-            <IonList>
-              {keys.map((key, index) => (
-                <IonItem lines="full">
-                  <IonInput
-                    type="text"
-                    placeholder="NT Key"
-                    value={key}
-                    key={index}
-                    onInput={(e) => {
-                      let temp = [...keys];
-                      temp[index] = e.currentTarget.value?.toString() ?? "";
-                      setKeys(temp);
-                    }}
-                  />
-                  <IonIcon
-                    icon={closeCircle}
-                    onClick={() => {
-                      setKeys(keys.filter((_, i) => i !== index));
-                    }}
-                  />
-                </IonItem>
-              ))}
-            </IonList>
-            <IonButton
-              className="add-value-btn"
-              onClick={() => {
-                setKeys([...keys, ""]);
-              }}
-            >
-              Add a value
-            </IonButton>
+          <IonContent className="field-settings">
+            <IonCard>
+              <IonCardHeader>
+                <IonCardTitle>Left Axis</IonCardTitle>
+              </IonCardHeader>
+              <IonCardContent>
+                <IonList>
+                  {leftKeys.map((key, index) => (
+                    <IonItem
+                      className="ion-no-padding test"
+                      key={index}
+                      lines="full"
+                    >
+                      <NTSelect
+                        key={index}
+                        initialValue={key}
+                        onSelectionChange={(e) => {
+                          let temp = [...leftKeys];
+                          temp[index] = e ?? "";
+                          setLeftKeys(temp);
+                        }}
+                      />
+                      <IonIcon
+                        icon={closeCircle}
+                        onClick={() => {
+                          setLeftKeys(leftKeys.filter((_, i) => i !== index));
+                        }}
+                      />
+                    </IonItem>
+                  ))}
+                </IonList>
+                <IonButton
+                  className="add-value-btn"
+                  onClick={() => {
+                    setLeftKeys([...leftKeys, ""]);
+                  }}
+                >
+                  Add a value
+                </IonButton>
+              </IonCardContent>
+            </IonCard>
+            <IonCard>
+              <IonCardHeader>
+                <IonCardTitle>Right Axis</IonCardTitle>
+              </IonCardHeader>
+              <IonCardContent>
+                <IonList>
+                  {rightKeys.map((key, index) => (
+                    <IonItem key={index} lines="full">
+                      <NTSelect
+                        initialValue={key}
+                        key={index}
+                        onSelectionChange={(e) => {
+                          let temp = [...rightKeys];
+                          temp[index] = e ?? "";
+                          setRightKeys(temp);
+                        }}
+                      />
+                      <IonIcon
+                        icon={closeCircle}
+                        onClick={() => {
+                          setRightKeys(rightKeys.filter((_, i) => i !== index));
+                        }}
+                      />
+                    </IonItem>
+                  ))}
+                </IonList>
+                <IonButton
+                  className="add-value-btn"
+                  onClick={() => {
+                    setRightKeys([...rightKeys, ""]);
+                  }}
+                >
+                  Add a value
+                </IonButton>
+              </IonCardContent>
+            </IonCard>
           </IonContent>
         </IonModal>
       </IonContent>
@@ -180,3 +325,7 @@ export default {
   tab: "graph",
   component: Page,
 };
+
+const randomNum = () => Math.floor(Math.random() * (235 - 52 + 1) + 52);
+
+const randomRGB = () => `rgb(${randomNum()}, ${randomNum()}, ${randomNum()})`;

@@ -21,7 +21,7 @@ import { useEffect, useState } from "react";
 import {
   connectURI,
   connectTeamNumber,
-  connectionStatus,
+  listenerStates,
 } from "../utils/networktables";
 import BulkSelect from "../components/BulkSelect";
 import { displayNames } from "./tabs";
@@ -33,19 +33,16 @@ interface SetupProps {
 
 const Page: React.FC<SetupProps> = (props: SetupProps) => {
   const [useAddress, setUseAddress] = useState(false);
-  const [connected, setConnected] = useState("Disconnected");
   const [ip, setIp] = useState("");
   const [teamNumber, setTeamNumber] = useState("");
   const [port, setPort] = useState("5810");
+  const [connected, setConnected] = useState("Disconnected");
+  listenerStates.push(setConnected);
 
   useEffect(() => {
     (async () => {
       setUseAddress(await storage().get("useAddress"));
     })();
-
-    setInterval(() => {
-      setConnected(connectionStatus);
-    }, 50);
 
     (async () => {
       setIp(await storage().get("ip"));
@@ -96,10 +93,16 @@ const Page: React.FC<SetupProps> = (props: SetupProps) => {
                       useAddress ? "ip" : "teamNumber",
                       (document.getElementById("ip") as HTMLInputElement).value
                     );
-                    if(useAddress){
-                      setIp((document.getElementById("ip") as HTMLInputElement).value)
+                    if (useAddress) {
+                      setIp(
+                        (document.getElementById("ip") as HTMLInputElement)
+                          .value
+                      );
                     } else {
-                      setTeamNumber((document.getElementById("ip") as HTMLInputElement).value)
+                      setTeamNumber(
+                        (document.getElementById("ip") as HTMLInputElement)
+                          .value
+                      );
                     }
                   }}
                 />

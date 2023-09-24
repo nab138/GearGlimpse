@@ -1,16 +1,20 @@
 import {
+  IonButton,
   IonCard,
   IonCardContent,
   IonCardHeader,
   IonCardTitle,
   IonContent,
   IonHeader,
+  IonModal,
   IonPage,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
 import "./Docs.css";
 import { book } from "ionicons/icons";
+import { useRef } from "react";
+import NTSelect from "../../components/NTSelect";
 
 const Page: React.FC = () => {
   return (
@@ -28,11 +32,24 @@ const Page: React.FC = () => {
         </div>
         <IonCard>
           <IonCardHeader>
-            <IonCardTitle>Quickstart</IonCardTitle>
+            <IonCardTitle>Getting Started</IonCardTitle>
           </IonCardHeader>
           <IonCardContent>
             Visit the "Setup" tab in the bottom left to configure your tabs and
-            set up NT4.
+            set up NT4. Most tabs have extra options available by clicking the
+            gear icon in the top right.
+          </IonCardContent>
+        </IonCard>
+        <IonCard>
+          <IonCardHeader>
+            <IonCardTitle>Graph Tab</IonCardTitle>
+          </IonCardHeader>
+          <IonCardContent>
+            The Graph tab may not work exactly as you expect (for now). It is a
+            little buggy and slow, but it should function. The x-axis (time)
+            only updates when a new value is recieved for any value on the
+            graph. This tab is still being worked on and will hopefully improve
+            in the future.
           </IonCardContent>
         </IonCard>
       </IonContent>
