@@ -115,6 +115,10 @@ const Page: React.FC<SetupProps> = (props: SetupProps) => {
                   id="port"
                   value={port}
                   onInput={() => {
+                    setPort(
+                      (document.getElementById("port") as HTMLInputElement)
+                        .value
+                    );
                     storage().set(
                       "port",
                       (document.getElementById("port") as HTMLInputElement)
