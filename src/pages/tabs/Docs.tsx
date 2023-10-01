@@ -45,11 +45,28 @@ const Page: React.FC = () => {
             <IonCardTitle>Graph Tab</IonCardTitle>
           </IonCardHeader>
           <IonCardContent>
-            The Graph tab may not work exactly as you expect (for now). It is a
-            little buggy and slow, but it should function. The x-axis (time)
-            only updates when a new value is recieved for any value on the
-            graph. This tab is still being worked on and will hopefully improve
-            in the future.
+            The graph tab is a little buggy right now, there are a few things to
+            note (some of these may change in the future):
+            <ul>
+              <li>
+                It's possible to zoom way too far out or too far in currently.
+                As a workaround, you can reset your zoom by going to a different
+                tab then back to the graph tab.
+              </li>
+              <li>
+                Data is delted from the graph as soon as it goes offscreen, even
+                if you try to zoom out to see it again.
+              </li>
+              <li>
+                There is a small delay between the value changing and it
+                appearing on the graph.
+              </li>
+              <li>
+                The timestamps are based on when the value was received by
+                GearGlimpse, not when it was set on the server, so there may be
+                inaccuracies.
+              </li>
+            </ul>
           </IonCardContent>
         </IonCard>
       </IonContent>
