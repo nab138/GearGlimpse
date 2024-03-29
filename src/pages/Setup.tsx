@@ -4,18 +4,18 @@ import {
   IonCardContent,
   IonCardHeader,
   IonCardTitle,
-  IonCheckbox,
   IonContent,
   IonHeader,
   IonInput,
   IonItem,
+  IonLabel,
   IonPage,
   IonTitle,
   IonToggle,
   IonToolbar,
 } from "@ionic/react";
 import "./Setup.css";
-
+import { App, AppInfo } from "@capacitor/app";
 import storage from "../utils/storage";
 import { useEffect, useState } from "react";
 import {
@@ -32,12 +32,24 @@ interface SetupProps {
 }
 
 const Page: React.FC<SetupProps> = (props: SetupProps) => {
+  const [version, setVersion] = useState("");
+  const [appInfo, setAppInfo] = useState<AppInfo>();
   const [useAddress, setUseAddress] = useState(false);
   const [ip, setIp] = useState("");
   const [teamNumber, setTeamNumber] = useState("");
   const [port, setPort] = useState("5810");
   const [connected, setConnected] = useState("Disconnected");
   listenerStates.push(setConnected);
+
+  useEffect(() => {
+    const fetchInfo = async () => {
+      let versionModule = await import(`../version.json`);
+      setVersion(versionModule.default.version);
+      const info = await App.getInfo();
+      setAppInfo(info);
+    };
+    fetchInfo();
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -181,6 +193,23 @@ const Page: React.FC<SetupProps> = (props: SetupProps) => {
                 maxItems={4}
                 minItems={1}
               />
+            </IonCardContent>
+          </IonCard>
+          <IonCard className="tabs-card">
+            <IonCardHeader>
+              <IonCardTitle>Versions</IonCardTitle>
+            </IonCardHeader>
+            <IonCardContent>
+              <IonItem color="light">
+                <IonLabel>Native version: {appInfo?.version}</IonLabel>
+              </IonItem>
+              <IonItem color="light">
+                <IonLabel>Native Build: {appInfo?.build}</IonLabel>
+              </IonItem>
+              <IonItem color="light">
+                {/* Get version from appflows live update patch */}
+                <IonLabel>JS Bundle version: {version}</IonLabel>
+              </IonItem>
             </IonCardContent>
           </IonCard>
         </div>

@@ -121,6 +121,7 @@ pull:
 
 build_proj:
 	ionic capacitor add ios
+	ionic capacitor sync
 	ionic capacitor build ios
 
 pod_install:

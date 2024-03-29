@@ -1,7 +1,7 @@
 {
   "name": "gear-glimpse",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,7 +9,9 @@
     "preview": "vite preview",
     "test.e2e": "cypress run",
     "test.unit": "vitest",
-    "lint": "eslint"
+    "lint": "eslint",
+    "wv": "node -e \"let version = require('./src/version.json'); let parts = version.version.split('.'); parts[2] = parseInt(parts[2]) + 1; version.version = parts.join('.'); require('fs').writeFileSync('./src/version.json', JSON.stringify(version, null, 2));\"",
+    "nv": "npm version patch --no-git-tag-version && node -e \"let fs = require('fs'); let buildNumber = parseInt(fs.readFileSync('./build-number.txt', 'utf8')) + 1; fs.writeFileSync('./build-number.txt', buildNumber.toString());\" && npx capacitor-set-version set:ios -v $(node -p \"require('./package.json').version\") -b $(node -p \"require('fs').readFileSync('./build-number.txt', 'utf8')\") ."
   },
   "dependencies": {
     "@awesome-cordova-plugins/core": "^6.4.0",
@@ -19,6 +21,7 @@
     "@capacitor/haptics": "next",
     "@capacitor/ios": "next",
     "@capacitor/keyboard": "next",
+    "@capacitor/live-updates": "^0.1.3",
     "@capacitor/status-bar": "next",
     "@ionic/react": "^7.0.0",
     "@ionic/react-router": "^7.0.0",
