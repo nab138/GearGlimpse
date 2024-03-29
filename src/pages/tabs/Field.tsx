@@ -13,6 +13,7 @@ import {
   IonItem,
   IonSelect,
   IonSelectOption,
+  IonToggle,
 } from "@ionic/react";
 import "./Field.css";
 import storage from "../../utils/storage";
@@ -26,38 +27,11 @@ import { useEffect, useRef, useState } from "react";
 import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-component-lib/interfaces";
 import ThreeComponent from "../../components/3d/ThreeComponent";
 import {
-  RobotConfig,
-  loadFieldModel,
-  loadRobotModel,
-  setRobotPosition,
-} from "../../components/3dmount";
-import {
   NetworkTablesTopic,
   NetworkTablesTypeInfos,
 } from "ntcore-ts-client-monorepo/packages/ntcore-ts-client/src/index";
 import { listenerStates, subscribe } from "../../utils/networktables";
 import NTSelect from "../../components/NTSelect";
-
-export const robotProps = {
-  KitBot: {
-    rotations: [
-      { axis: "x", degrees: -90 },
-      { axis: "y", degrees: -90 },
-    ],
-    position: [-0.12, 0, 3.15],
-  } as RobotConfig,
-  "Duck Bot": {
-    rotations: [
-      { axis: "x", degrees: -90 },
-      { axis: "y", degrees: -90 },
-    ],
-    position: [0, 0, 0],
-  } as RobotConfig,
-  "Crab Bot": {
-    rotations: [{ axis: "x", degrees: -90 }],
-    position: [0, 0, 0.045],
-  } as RobotConfig,
-};
 
 const Page: React.FC = () => {
   const outToolAnimation = useRef<Animation | null>(null);
@@ -73,11 +47,14 @@ const Page: React.FC = () => {
   const robotInput = useRef<HTMLIonSelectElement>(null);
 
   const [connected, setConnected] = useState("Disconnected");
+  const [position, setPosition] = useState<[number, number, number]>([
+    -1, -1, -1,
+  ]);
   listenerStates.push(setConnected);
 
-  function moveRobotCallback(value: number[]): void {
+  function moveRobotCallback(value: [number, number, number]): void {
     if (value == null) return;
-    setRobotPosition(value[0], value[1], value[2]);
+    setPosition([value[0], value[1], value[2]]);
   }
 
   const [robotTopic, setRobotTopic] = useState<
@@ -85,9 +62,13 @@ const Page: React.FC = () => {
   >(null);
 
   const [field, setField] = useState(defaultField);
+  const [unconfirmedField, setUnconfirmedField] = useState(defaultField);
   const [robot, setRobot] = useState("KitBot");
+  const [unconfirmedRobot, setUnconfirmedRobot] = useState("KitBot");
   const [robotKey, setRobotKey] = useState("");
   const [unconfirmedRobotKey, setUnconfirmedRobotKey] = useState("");
+
+  const [statsEnabled, setStatsEnabled] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -97,6 +78,7 @@ const Page: React.FC = () => {
         field = `Field3d_${defaultField}.glb`;
       }
       setField(field.split("_")[1].split(".")[0]);
+      setUnconfirmedField(field.split("_")[1].split(".")[0]);
     })();
 
     (async () => {
@@ -106,6 +88,7 @@ const Page: React.FC = () => {
         robot = "Robot_KitBot.glb";
       }
       setRobot(robot.split("_")[1].split(".")[0]);
+      setUnconfirmedRobot(robot.split("_")[1].split(".")[0]);
     })();
 
     (async () => {
@@ -115,9 +98,18 @@ const Page: React.FC = () => {
         robotKey = "/SmartDashboard/Field/Robot";
       }
 
-      console.log(robotKey);
       setRobotKey(robotKey);
       setUnconfirmedRobotKey(robotKey);
+    })();
+
+    (async () => {
+      let statsEnabled = await storage().get("statsEnabled");
+      if (statsEnabled == undefined) {
+        await storage().set("statsEnabled", false);
+        statsEnabled = false;
+      }
+
+      setStatsEnabled(statsEnabled);
     })();
   }, []);
 
@@ -134,18 +126,20 @@ const Page: React.FC = () => {
   function onWillDismiss(ev: CustomEvent<OverlayEventDetail>) {
     if (ev.detail.role === "confirm") {
       storage().set("field", `Field3d_${ev.detail.data.field}.glb`);
-      loadFieldModel(`Field3d_${ev.detail.data.field}.glb`);
+      //loadFieldModel(`Field3d_${ev.detail.data.field}.glb`);
       setField(ev.detail.data.field);
       storage().set("robot", `Robot_${ev.detail.data.robot}.glb`);
-      loadRobotModel(
-        `Robot_${ev.detail.data.robot}.glb`,
-        robotProps[ev.detail.data.robot as keyof typeof robotProps]
-      );
+      // loadRobotModel(
+      //   `Robot_${ev.detail.data.robot}.glb`,
+      //   robotProps[ev.detail.data.robot as keyof typeof robotProps]
+      // );
       setRobot(ev.detail.data.robot);
       storage().set("robotKey", unconfirmedRobotKey);
       setRobotKey(unconfirmedRobotKey);
     } else {
       setUnconfirmedRobotKey(robotKey);
+      setUnconfirmedRobot(robot);
+      setUnconfirmedField(field);
     }
   }
 
@@ -240,7 +234,12 @@ const Page: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent className="field-page">
-        <ThreeComponent />
+        <ThreeComponent
+          position={position}
+          field={`Field3d_${field}.glb`}
+          robot={robot}
+          statsEnabled={statsEnabled}
+        />
         <IonModal
           ref={modal}
           trigger="field-settings"
@@ -268,7 +267,8 @@ const Page: React.FC = () => {
                 interface="popover"
                 label="Field"
                 labelPlacement="stacked"
-                value={field}
+                value={unconfirmedField}
+                onIonChange={(e) => setUnconfirmedField(e.detail.value)}
               >
                 {fields.map((field) => (
                   <IonSelectOption
@@ -287,7 +287,8 @@ const Page: React.FC = () => {
                 interface="popover"
                 label="Robot"
                 labelPlacement="stacked"
-                value={robot}
+                value={unconfirmedRobot}
+                onIonChange={(e) => setUnconfirmedRobot(e.detail.value)}
               >
                 {robots.map((robot) => (
                   <IonSelectOption
@@ -307,6 +308,17 @@ const Page: React.FC = () => {
                   setUnconfirmedRobotKey(key);
                 }}
               />
+            </IonItem>
+            <IonItem>
+              <IonToggle
+                checked={statsEnabled}
+                onIonChange={(e) => {
+                  setStatsEnabled(e.detail.checked);
+                  storage().set("statsEnabled", e.detail.checked);
+                }}
+              >
+                Show Stats
+              </IonToggle>
             </IonItem>
           </IonContent>
         </IonModal>

@@ -5,7 +5,7 @@ export interface FieldProps {
   field: string;
 }
 const FieldModel: React.FC<FieldProps> = ({ field }) => {
-  const { scene } = useGLTF(field, true);
+  const { scene } = useGLTF(field);
   useEffect(() => {
     scene.traverse((node: any) => {
       let mesh = node as THREE.Mesh; // Traverse function returns Object3d or Mesh
@@ -16,7 +16,7 @@ const FieldModel: React.FC<FieldProps> = ({ field }) => {
       }
     });
   }, [scene]);
-  console.log("rendering");
+  //console.log("rendering");
 
   return (
     <mesh>
