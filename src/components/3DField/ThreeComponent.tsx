@@ -19,7 +19,12 @@ const ThreeComponent: React.FC<ThreeComponentProps> = ({
   statsEnabled,
   cinematic,
 }) => {
-  console.log("ThreeComponent", cinematic);
+  let [orientation, setOrientation] = React.useState(
+    screen.orientation.type.split("-")[0]
+  );
+  window.addEventListener("orientationchange", function () {
+    setOrientation(screen.orientation.type.split("-")[0]);
+  });
   return (
     <>
       <Canvas
@@ -38,7 +43,9 @@ const ThreeComponent: React.FC<ThreeComponentProps> = ({
           dampingFactor={0.25}
         />
       </Canvas>
-      {statsEnabled && <Stats className="three-stats" />}
+      {statsEnabled && (
+        <Stats key={orientation} className={"three-stats-" + orientation} />
+      )}
     </>
   );
 };

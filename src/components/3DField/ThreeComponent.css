@@ -1,5 +1,9 @@
-.three-stats {
-  margin-top: 45px;
-  position: absolute !important;
-  z-index: 0 !important;
+.three-stats-landscape {
+  margin-left: 5px;
+  margin-top: 50px;
+}
+
+.three-stats-portrait {
+  margin-left: 5px;
+  margin-top: 100px;
 }

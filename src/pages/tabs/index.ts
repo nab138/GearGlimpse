@@ -3,6 +3,9 @@ import Graph from "./Graph";
 import Docs from "./Docs";
 import Swerve from "./Swerve";
 
+export interface TabProps {
+  focused: boolean;
+}
 /**
  * When adding new tabs, just import them here and add them to this array. No other changes are needed.
  */

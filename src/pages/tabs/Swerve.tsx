@@ -7,8 +7,9 @@ import {
 } from "@ionic/react";
 import "./Swerve.css";
 import { car } from "ionicons/icons";
+import { TabProps } from ".";
 
-const Page: React.FC = () => {
+const Page: React.FC<TabProps> = () => {
   return (
     <IonPage>
       <IonHeader>

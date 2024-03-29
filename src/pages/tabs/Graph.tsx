@@ -8,7 +8,6 @@ import {
   IonContent,
   IonHeader,
   IonIcon,
-  IonInput,
   IonItem,
   IonList,
   IonModal,
@@ -51,6 +50,7 @@ import NTSelect from "../../components/NTSelect";
 import "chartjs-adapter-luxon";
 import zoomPlugin from "chartjs-plugin-zoom";
 import StreamingPlugin from "@robloche/chartjs-plugin-streaming";
+import { TabProps } from ".";
 
 ChartJS.register(
   zoomPlugin,
@@ -66,7 +66,7 @@ ChartJS.register(
 
 const topics: NetworkTablesTopic<number>[] = [];
 
-const Page: React.FC = () => {
+const Page: React.FC<TabProps> = () => {
   const [paused, setPaused] = useState(false);
 
   const modal = useRef<HTMLIonModalElement>(null);

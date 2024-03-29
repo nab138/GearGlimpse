@@ -28,8 +28,9 @@ import {
 } from "ntcore-ts-client-monorepo/packages/ntcore-ts-client/src/index";
 import { listenerStates, subscribe } from "../../utils/networktables";
 import Settings from "../../components/3DField/Settings";
+import { TabProps } from ".";
 
-const Page: React.FC = () => {
+const Page: React.FC<TabProps> = ({ focused }) => {
   const outToolAnimation = useRef<Animation | null>(null);
   const outAnimation = useRef<Animation | null>(null);
 
@@ -66,6 +67,7 @@ const Page: React.FC = () => {
   const [cinematicMode, setCinematicMode] = useState(false);
   const [unconfirmedCinematicMode, setUnconfirmedCinematicMode] =
     useState(false);
+  const [toolbarHidden, setToolbarHidden] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -191,6 +193,7 @@ const Page: React.FC = () => {
       e.clientY < window.innerHeight * 0.84
     )
       return;
+    setToolbarHidden(false);
     inAnimation.current?.play();
     inAnimation.current?.onFinish(() => {
       inAnimation.current?.stop();
@@ -229,6 +232,7 @@ const Page: React.FC = () => {
                     .querySelector("ion-tab-bar")
                     ?.style.setProperty("transform", "translateY(100%)");
                 });
+                setToolbarHidden(true);
                 outAnimation.current?.play();
               }}
             >
@@ -242,7 +246,7 @@ const Page: React.FC = () => {
           position={position}
           field={`Field3d_${field}.glb`}
           robot={robot}
-          statsEnabled={statsEnabled}
+          statsEnabled={focused && statsEnabled}
           cinematic={cinematicMode}
         />
         <IonModal

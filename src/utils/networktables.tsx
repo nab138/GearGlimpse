@@ -104,9 +104,7 @@ function loadAllTopics() {
   let topic = client?.createTopic<string>("/", NetworkTablesTypeInfos.kString);
 
   let id = topic?.subscribe(
-    (value) => {
-      //console.log(value);
-    },
+    () => {},
     true,
     {
       periodic: 1,

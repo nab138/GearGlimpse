@@ -36,11 +36,15 @@ export const robotProps = {
 export interface RobotModelProps {
   robot: string;
   position: [number, number, number];
+  cinematic?: boolean;
 }
 const RobotModel: React.FC<RobotModelProps> = ({
   robot: robotName,
   position,
+  cinematic,
 }) => {
+  let MATERIAL_SPECULAR: THREE.Color = new THREE.Color(0x666666);
+  let MATERIAL_SHININESS: number = 100;
   const robotInner = useGLTF("Robot_" + robotName + ".glb").scene;
   const [robot, setRobot] = useState<THREE.Group | undefined>(undefined);
 
@@ -57,9 +61,27 @@ const RobotModel: React.FC<RobotModelProps> = ({
     robotTemp.traverse((node: any) => {
       let mesh = node as THREE.Mesh; // Traverse function returns Object3d or Mesh
       if (mesh.isMesh && mesh.material instanceof THREE.MeshStandardMaterial) {
-        let material = mesh.material as THREE.MeshStandardMaterial;
-        material.metalness = 0;
-        material.roughness = 1;
+        if (cinematic) {
+          MATERIAL_SPECULAR = new THREE.Color(0x666666);
+          MATERIAL_SHININESS = 100;
+          // Cinematic, replace with MeshPhongMaterial
+          let newMaterial = new THREE.MeshPhongMaterial({
+            color: mesh.material.color,
+            transparent: mesh.material.transparent,
+            opacity: mesh.material.opacity,
+            specular: MATERIAL_SPECULAR,
+            shininess: MATERIAL_SHININESS,
+          });
+          mesh.material.dispose();
+          mesh.material = newMaterial;
+          mesh.castShadow = !mesh.material.transparent;
+          mesh.receiveShadow = !mesh.material.transparent;
+        } else {
+          MATERIAL_SPECULAR = new THREE.Color(0x000000);
+          MATERIAL_SHININESS = 0;
+          mesh.material.metalness = 0;
+          mesh.material.roughness = 1;
+        }
       }
     });
     setRobot(robotTemp);

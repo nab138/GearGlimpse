@@ -42,6 +42,7 @@ setupIonicReact({
 });
 
 const App: React.FC = () => {
+  const [focusedTab, setFocusedTab] = useState("Docs");
   const [addedTabs, setAddedTabs] = useState(["Docs"]);
   useEffect(() => {
     (async () => {
@@ -54,10 +55,35 @@ const App: React.FC = () => {
     })();
   }, []);
 
+  useEffect(() => {
+    const handleLocationChange = () => {
+      const path = window.location.pathname;
+      // Extract the tab name from the path and set it as the focused tab
+      const tab = path.split("/")[1]; // Adjust this based on your URL structure
+      setFocusedTab(tab);
+    };
+
+    // Call the function once to set the initial tab
+    handleLocationChange();
+
+    // Listen for changes in the URL
+    window.addEventListener("popstate", handleLocationChange);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("popstate", handleLocationChange);
+    };
+  }, []);
+
   return (
     <IonApp>
       <IonReactRouter>
-        <IonTabs className="tab-bar">
+        <IonTabs
+          className="tab-bar"
+          onIonTabsWillChange={(e) => {
+            setFocusedTab(e.detail.tab);
+          }}
+        >
           <IonRouterOutlet>
             <Redirect exact path="/" to="/docs" />
             <Route
@@ -73,7 +99,9 @@ const App: React.FC = () => {
                 <Route
                   key={tab.path}
                   path={tab.path}
-                  render={() => <tab.component />}
+                  render={() => (
+                    <tab.component focused={focusedTab === tab.tab} />
+                  )}
                   exact={true}
                 />
               ))

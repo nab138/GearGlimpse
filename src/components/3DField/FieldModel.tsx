@@ -57,15 +57,8 @@ const FieldModel: React.FC<FieldProps> = ({ field, cinematic }) => {
         } else {
           MATERIAL_SPECULAR = new THREE.Color(0x000000);
           MATERIAL_SHININESS = 0;
-          let newMaterial = new THREE.MeshStandardMaterial({
-            color: mesh.material.color,
-            transparent: mesh.material.transparent,
-            opacity: mesh.material.opacity,
-            metalness: 0,
-            roughness: 1,
-          });
-          mesh.material.dispose();
-          mesh.material = newMaterial;
+          mesh.material.metalness = 0;
+          mesh.material.roughness = 1;
         }
       }
     });

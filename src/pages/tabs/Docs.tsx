@@ -1,22 +1,19 @@
 import {
-  IonButton,
   IonCard,
   IonCardContent,
   IonCardHeader,
   IonCardTitle,
   IonContent,
   IonHeader,
-  IonModal,
   IonPage,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
 import "./Docs.css";
 import { book } from "ionicons/icons";
-import { useRef } from "react";
-import NTSelect from "../../components/NTSelect";
+import { TabProps } from ".";
 
-const Page: React.FC = () => {
+const Page: React.FC<TabProps> = () => {
   return (
     <IonPage>
       <IonHeader>
