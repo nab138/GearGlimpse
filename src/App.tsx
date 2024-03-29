@@ -47,7 +47,7 @@ const App: React.FC = () => {
     (async () => {
       let tabs = await storage().get("tabs");
       if (tabs == undefined) {
-        tabs = ["Docs"];
+        tabs = ["Docs", "3D Field"];
         await storage().set("tabs", tabs);
       }
       setAddedTabs(tabs);

@@ -105,7 +105,7 @@ function loadAllTopics() {
 
   let id = topic?.subscribe(
     (value) => {
-      console.log(value);
+      //console.log(value);
     },
     true,
     {
