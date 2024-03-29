@@ -23,6 +23,8 @@
     "@ionic/react": "^7.0.0",
     "@ionic/react-router": "^7.0.0",
     "@ionic/storage": "^4.0.0",
+    "@react-three/drei": "^9.102.6",
+    "@react-three/fiber": "^8.16.0",
     "@robloche/chartjs-plugin-streaming": "^3.1.0",
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "^5.3.3",

@@ -24,7 +24,7 @@ const robots = ["KitBot", "Duck Bot", "Crab Bot"];
 import { chevronUpOutline, map, settingsOutline } from "ionicons/icons";
 import { useEffect, useRef, useState } from "react";
 import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-component-lib/interfaces";
-import ThreeComponent from "../../components/ThreeComponent";
+import ThreeComponent from "../../components/3d/ThreeComponent";
 import {
   RobotConfig,
   loadFieldModel,
