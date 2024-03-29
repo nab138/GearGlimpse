@@ -66,7 +66,11 @@ const FieldModel: React.FC<FieldProps> = ({ field, cinematic }) => {
 
   return (
     <mesh>
-      <hemisphereLight groundColor={0x444444} intensity={cinematic ? 0.5 : 2} />
+      <hemisphereLight
+        color={0xffffff}
+        groundColor={0x444444}
+        intensity={cinematic ? 0.5 : 2}
+      />
       <group rotation={new THREE.Euler().setFromQuaternion(WPILIB_ROTATION)}>
         {!cinematic && <pointLight intensity={0.5} position={[0, 0, 10]} />}
         {cinematic &&

@@ -73,7 +73,7 @@ help:
 install_node_dependencies:
 	$(info Install node dependencies…)
 
-	npm ci --force
+	npm ci
 
 install_ionic:
 	$(info Install ionic…)
