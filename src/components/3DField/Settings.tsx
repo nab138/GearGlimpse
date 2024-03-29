@@ -31,6 +31,7 @@ export interface SettingsProps {
   setUnconfirmedStatsEnabled: (enabled: boolean) => void;
   unconfirmedCinematicMode: boolean;
   setUnconfirmedCinematicMode: (enabled: boolean) => void;
+  className?: string;
 }
 
 const Settings: React.FC<SettingsProps> = ({

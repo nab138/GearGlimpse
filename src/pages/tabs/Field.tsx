@@ -67,7 +67,7 @@ const Page: React.FC<TabProps> = ({ focused }) => {
   const [cinematicMode, setCinematicMode] = useState(false);
   const [unconfirmedCinematicMode, setUnconfirmedCinematicMode] =
     useState(false);
-  const [toolbarHidden, setToolbarHidden] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -125,6 +125,7 @@ const Page: React.FC<TabProps> = ({ focused }) => {
   }, []);
 
   function onWillDismiss(ev: CustomEvent<OverlayEventDetail>) {
+    setModalOpen(false);
     if (ev.detail.role === "confirm") {
       storage().set("field", `Field3d_${ev.detail.data.field}.glb`);
       //loadFieldModel(`Field3d_${ev.detail.data.field}.glb`);
@@ -193,7 +194,6 @@ const Page: React.FC<TabProps> = ({ focused }) => {
       e.clientY < window.innerHeight * 0.84
     )
       return;
-    setToolbarHidden(false);
     inAnimation.current?.play();
     inAnimation.current?.onFinish(() => {
       inAnimation.current?.stop();
@@ -232,7 +232,6 @@ const Page: React.FC<TabProps> = ({ focused }) => {
                     .querySelector("ion-tab-bar")
                     ?.style.setProperty("transform", "translateY(100%)");
                 });
-                setToolbarHidden(true);
                 outAnimation.current?.play();
               }}
             >
@@ -246,13 +245,15 @@ const Page: React.FC<TabProps> = ({ focused }) => {
           position={position}
           field={`Field3d_${field}.glb`}
           robot={robot}
-          statsEnabled={focused && statsEnabled}
+          // If focused, stats enabled, and settings modal is not open
+          statsEnabled={focused && statsEnabled && !modalOpen}
           cinematic={cinematicMode}
         />
         <IonModal
           ref={modal}
           trigger="field-settings"
           onWillDismiss={(ev) => onWillDismiss(ev)}
+          onWillPresent={() => setModalOpen(true)}
         >
           <Settings
             modal={modal}
