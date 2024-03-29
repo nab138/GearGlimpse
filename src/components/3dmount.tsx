@@ -3,7 +3,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { ScreenOrientation } from "@awesome-cordova-plugins/screen-orientation";
 import storage from "../utils/storage";
-import { robotProps } from "../pages/tabs/Field";
+import { defaultField, robotProps } from "../pages/tabs/Field";
 
 // init
 const camera = new THREE.PerspectiveCamera(
@@ -166,7 +166,7 @@ ScreenOrientation.onChange().subscribe(() => {
 
 export async function mount(container: HTMLElement | null) {
   if (container) {
-    await loadFieldModel((await storage().get("field")) ?? "Field3d_2023.glb");
+    await loadFieldModel((await storage().get("field")) ?? `Field3d_${defaultField}.glb`);
     let robot = (await storage().get("robot")) ?? "Robot_KitBot.glb";
     let robotName = robot?.split("_")[1].split(".")[0];
     await loadRobotModel(

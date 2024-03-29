@@ -13,12 +13,12 @@ import {
   IonItem,
   IonSelect,
   IonSelectOption,
-  IonInput,
 } from "@ionic/react";
 import "./Field.css";
 import storage from "../../utils/storage";
 
-const fields = ["2023", "2022"];
+const fields = ["2024", "2023", "2022"];
+export const defaultField = fields[0];
 const robots = ["KitBot", "Duck Bot", "Crab Bot"];
 
 import { chevronUpOutline, map, settingsOutline } from "ionicons/icons";
@@ -81,7 +81,7 @@ const Page: React.FC = () => {
     NetworkTablesTopic<number[]> | null | undefined
   >(null);
 
-  const [field, setField] = useState("2023");
+  const [field, setField] = useState(defaultField);
   const [robot, setRobot] = useState("KitBot");
   const [robotKey, setRobotKey] = useState("");
   const [unconfirmedRobotKey, setUnconfirmedRobotKey] = useState("");
@@ -90,8 +90,8 @@ const Page: React.FC = () => {
     (async () => {
       let field = await storage().get("field");
       if (field == undefined) {
-        await storage().set("field", "Field3d_2023.glb");
-        field = "Field3d_2023.glb";
+        await storage().set("field", `Field3d_${defaultField}.glb`);
+        field = `Field3d_${defaultField}.glb`;
       }
       setField(field.split("_")[1].split(".")[0]);
     })();
