@@ -1,0 +1,21 @@
+.field-buttons {
+  padding: 0 10px;
+}
+.field-header {
+  position: absolute;
+}
+body {
+  overflow: hidden;
+}
+
+.modal-title {
+  text-align: center;
+}
+
+.field-settings {
+  --ion-item-background: transparent;
+}
+
+ion-radio {
+  padding-left: 16px;
+}

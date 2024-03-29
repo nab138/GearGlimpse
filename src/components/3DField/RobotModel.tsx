@@ -43,6 +43,7 @@ const RobotModel: React.FC<RobotModelProps> = ({
 }) => {
   const robotInner = useGLTF("Robot_" + robotName + ".glb").scene;
   const [robot, setRobot] = useState<THREE.Group | undefined>(undefined);
+
   useEffect(() => {
     let robotConfig = robotProps[robotName as keyof typeof robotProps];
     robotInner.rotation.setFromQuaternion(
@@ -66,7 +67,12 @@ const RobotModel: React.FC<RobotModelProps> = ({
 
   useEffect(() => {
     if (robot !== undefined) {
-      if (position[0] === -1 && position[1] === -1 && position[2] === -1) {
+      if (
+        robot &&
+        position[0] === -1 &&
+        position[1] === -1 &&
+        position[2] === -1
+      ) {
         robot.visible = false;
         return;
       }
@@ -83,7 +89,7 @@ const RobotModel: React.FC<RobotModelProps> = ({
 
 export default RobotModel;
 
-function getQuaternionFromRotSeq(
+export function getQuaternionFromRotSeq(
   rotations: RobotConfigRotation[]
 ): THREE.Quaternion {
   let quaternion = new THREE.Quaternion();

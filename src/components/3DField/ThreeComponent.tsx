@@ -10,22 +10,30 @@ export interface ThreeComponentProps {
   robot: string;
   position: [number, number, number];
   statsEnabled: boolean;
+  cinematic: boolean;
 }
 const ThreeComponent: React.FC<ThreeComponentProps> = ({
   field,
   robot,
   position,
   statsEnabled,
+  cinematic,
 }) => {
+  console.log("ThreeComponent", cinematic);
   return (
     <>
-      <Canvas className="three-canvas" camera={{ position: [0, 10, -15] }}>
-        {field !== "" && <FieldModel field={field} />}
-        {robot !== "" && <RobotModel position={position} robot={robot} />}
+      <Canvas
+        shadows={cinematic}
+        className="three-canvas"
+        camera={{ position: [0, 10, -15] }}
+      >
+        {field !== "" && <FieldModel cinematic={cinematic} field={field} />}
+        {robot !== "" && (
+          <RobotModel key={field + robot} position={position} robot={robot} />
+        )}
         <OrbitControls
           maxPolarAngle={Math.PI / 2}
           maxDistance={30}
-          minDistance={0.2}
           enableDamping={true}
           dampingFactor={0.25}
         />

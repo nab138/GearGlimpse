@@ -10,28 +10,24 @@ import {
   createAnimation,
   type Animation,
   IonModal,
-  IonItem,
-  IonSelect,
-  IonSelectOption,
-  IonToggle,
 } from "@ionic/react";
 import "./Field.css";
 import storage from "../../utils/storage";
 
-const fields = ["2024", "2023", "2022"];
+export const fields = ["2024", "2023", "2022"];
 export const defaultField = fields[0];
-const robots = ["KitBot", "Duck Bot", "Crab Bot"];
+export const robots = ["KitBot", "Duck Bot", "Crab Bot"];
 
 import { chevronUpOutline, map, settingsOutline } from "ionicons/icons";
 import { useEffect, useRef, useState } from "react";
 import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-component-lib/interfaces";
-import ThreeComponent from "../../components/3d/ThreeComponent";
+import ThreeComponent from "../../components/3DField/ThreeComponent";
 import {
   NetworkTablesTopic,
   NetworkTablesTypeInfos,
 } from "ntcore-ts-client-monorepo/packages/ntcore-ts-client/src/index";
 import { listenerStates, subscribe } from "../../utils/networktables";
-import NTSelect from "../../components/NTSelect";
+import Settings from "../../components/3DField/Settings";
 
 const Page: React.FC = () => {
   const outToolAnimation = useRef<Animation | null>(null);
@@ -43,8 +39,6 @@ const Page: React.FC = () => {
   const header = useRef<HTMLIonHeaderElement | null>(null);
 
   const modal = useRef<HTMLIonModalElement>(null);
-  const fieldInput = useRef<HTMLIonSelectElement>(null);
-  const robotInput = useRef<HTMLIonSelectElement>(null);
 
   const [connected, setConnected] = useState("Disconnected");
   const [position, setPosition] = useState<[number, number, number]>([
@@ -67,8 +61,11 @@ const Page: React.FC = () => {
   const [unconfirmedRobot, setUnconfirmedRobot] = useState("KitBot");
   const [robotKey, setRobotKey] = useState("");
   const [unconfirmedRobotKey, setUnconfirmedRobotKey] = useState("");
-
   const [statsEnabled, setStatsEnabled] = useState(false);
+  const [unconfirmedStatsEnabled, setUnconfirmedStatsEnabled] = useState(false);
+  const [cinematicMode, setCinematicMode] = useState(false);
+  const [unconfirmedCinematicMode, setUnconfirmedCinematicMode] =
+    useState(false);
 
   useEffect(() => {
     (async () => {
@@ -110,18 +107,20 @@ const Page: React.FC = () => {
       }
 
       setStatsEnabled(statsEnabled);
+      setUnconfirmedStatsEnabled(statsEnabled);
+    })();
+
+    (async () => {
+      let cinematic = await storage().get("cinematic");
+      if (cinematic == undefined) {
+        await storage().set("cinematic", false);
+        cinematic = false;
+      }
+
+      setCinematicMode(cinematic);
+      setUnconfirmedCinematicMode(cinematic);
     })();
   }, []);
-
-  function confirm() {
-    modal.current?.dismiss(
-      {
-        field: fieldInput.current?.value,
-        robot: robotInput.current?.value,
-      },
-      "confirm"
-    );
-  }
 
   function onWillDismiss(ev: CustomEvent<OverlayEventDetail>) {
     if (ev.detail.role === "confirm") {
@@ -136,10 +135,15 @@ const Page: React.FC = () => {
       setRobot(ev.detail.data.robot);
       storage().set("robotKey", unconfirmedRobotKey);
       setRobotKey(unconfirmedRobotKey);
+      storage().set("statsEnabled", unconfirmedStatsEnabled);
+      setStatsEnabled(unconfirmedStatsEnabled);
+      storage().set("cinematic", unconfirmedCinematicMode);
+      setCinematicMode(unconfirmedCinematicMode);
     } else {
       setUnconfirmedRobotKey(robotKey);
       setUnconfirmedRobot(robot);
       setUnconfirmedField(field);
+      setUnconfirmedStatsEnabled(statsEnabled);
     }
   }
 
@@ -239,88 +243,26 @@ const Page: React.FC = () => {
           field={`Field3d_${field}.glb`}
           robot={robot}
           statsEnabled={statsEnabled}
+          cinematic={cinematicMode}
         />
         <IonModal
           ref={modal}
           trigger="field-settings"
           onWillDismiss={(ev) => onWillDismiss(ev)}
         >
-          <IonHeader>
-            <IonToolbar>
-              <IonButtons slot="start">
-                <IonButton onClick={() => modal.current?.dismiss()}>
-                  Cancel
-                </IonButton>
-              </IonButtons>
-              <IonTitle class="modal-title">3D Field Setup</IonTitle>
-              <IonButtons slot="end">
-                <IonButton strong={true} onClick={() => confirm()}>
-                  Confirm
-                </IonButton>
-              </IonButtons>
-            </IonToolbar>
-          </IonHeader>
-          <IonContent className="ion-padding field-settings">
-            <IonItem lines="full">
-              <IonSelect
-                ref={fieldInput}
-                interface="popover"
-                label="Field"
-                labelPlacement="stacked"
-                value={unconfirmedField}
-                onIonChange={(e) => setUnconfirmedField(e.detail.value)}
-              >
-                {fields.map((field) => (
-                  <IonSelectOption
-                    className="ion-no-padding"
-                    key={field}
-                    value={field}
-                  >
-                    {field}
-                  </IonSelectOption>
-                ))}
-              </IonSelect>
-            </IonItem>
-            <IonItem lines="full">
-              <IonSelect
-                ref={robotInput}
-                interface="popover"
-                label="Robot"
-                labelPlacement="stacked"
-                value={unconfirmedRobot}
-                onIonChange={(e) => setUnconfirmedRobot(e.detail.value)}
-              >
-                {robots.map((robot) => (
-                  <IonSelectOption
-                    className="ion-no-padding"
-                    key={robot}
-                    value={robot}
-                  >
-                    {robot}
-                  </IonSelectOption>
-                ))}
-              </IonSelect>
-            </IonItem>
-            <IonItem lines="full">
-              <NTSelect
-                initialValue={robotKey}
-                onSelectionChange={(key) => {
-                  setUnconfirmedRobotKey(key);
-                }}
-              />
-            </IonItem>
-            <IonItem>
-              <IonToggle
-                checked={statsEnabled}
-                onIonChange={(e) => {
-                  setStatsEnabled(e.detail.checked);
-                  storage().set("statsEnabled", e.detail.checked);
-                }}
-              >
-                Show Stats
-              </IonToggle>
-            </IonItem>
-          </IonContent>
+          <Settings
+            modal={modal}
+            unconfirmedField={unconfirmedField}
+            setUnconfirmedField={setUnconfirmedField}
+            unconfirmedRobot={unconfirmedRobot}
+            setUnconfirmedRobot={setUnconfirmedRobot}
+            setUnconfirmedRobotKey={setUnconfirmedRobotKey}
+            robotKey={robotKey}
+            unconfirmedStatsEnabled={unconfirmedStatsEnabled}
+            setUnconfirmedStatsEnabled={setUnconfirmedStatsEnabled}
+            setUnconfirmedCinematicMode={setUnconfirmedCinematicMode}
+            unconfirmedCinematicMode={unconfirmedCinematicMode}
+          />
         </IonModal>
       </IonContent>
     </IonPage>
