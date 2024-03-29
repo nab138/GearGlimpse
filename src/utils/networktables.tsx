@@ -100,6 +100,10 @@ export function getTopicList() {
 export function getServerTime() {
   return client?.client.messenger.socket.getServerTime();
 }
+
+export function getTopicFromName(name: string) {
+  return client?.client.getTopicFromName(name);
+}
 function loadAllTopics() {
   let topic = client?.createTopic<string>("/", NetworkTablesTypeInfos.kString);
 

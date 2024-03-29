@@ -42,6 +42,8 @@ import {
   NetworkTablesTypeInfos,
 } from "ntcore-ts-client-monorepo/packages/ntcore-ts-client/src/index";
 import {
+  getTopicFromName,
+  getTopicList,
   lastTopicValues,
   listenerStates,
   subscribeWithStoring,
@@ -131,10 +133,10 @@ const Page: React.FC<TabProps> = () => {
     let tempData = [] as any[];
     allKeys.forEach((key) => {
       if (key == "") return;
-      let topic = subscribeWithStoring<number>(
-        key,
-        NetworkTablesTypeInfos.kDouble
-      );
+      let topicLookup = getTopicFromName(key);
+      if (topicLookup == null) return;
+
+      let topic = subscribeWithStoring<number>(key, topicLookup?.typeInfo);
       if (topic != null && topic != undefined) {
         topics.push(topic);
         let color = randomRGB();
