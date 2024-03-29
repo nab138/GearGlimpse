@@ -4,7 +4,7 @@ import {
   NetworkTablesTypeInfo,
   NetworkTablesTypeInfos,
   NetworkTablesTypes,
-} from "ntcore-ts-client";
+} from "ntcore-ts-client-monorepo/packages/ntcore-ts-client/src/index";
 
 let client: NetworkTables | null = null;
 export const listenerStates: ((_: string) => void)[] = [];

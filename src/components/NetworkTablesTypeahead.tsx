@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   IonButton,
   IonButtons,
@@ -10,7 +10,6 @@ import {
   IonSearchbar,
   IonToolbar,
 } from "@ionic/react";
-import type { CheckboxCustomEvent } from "@ionic/react";
 import { getTopicList } from "../utils/networktables";
 
 interface TypeaheadProps {

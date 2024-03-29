@@ -1,5 +1,5 @@
-import React, { useRef, useState } from "react";
-import { IonButton, IonItem, IonModal } from "@ionic/react";
+import { useRef, useState } from "react";
+import { IonModal } from "@ionic/react";
 import NetworkTablesTypeahead from "./NetworkTablesTypeahead";
 import "./NTSelect.css";
 

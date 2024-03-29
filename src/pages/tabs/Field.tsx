@@ -31,7 +31,10 @@ import {
   loadRobotModel,
   setRobotPosition,
 } from "../../components/3dmount";
-import { NetworkTablesTopic, NetworkTablesTypeInfos } from "ntcore-ts-client";
+import {
+  NetworkTablesTopic,
+  NetworkTablesTypeInfos,
+} from "ntcore-ts-client-monorepo/packages/ntcore-ts-client/src/index";
 import { listenerStates, subscribe } from "../../utils/networktables";
 import NTSelect from "../../components/NTSelect";
 

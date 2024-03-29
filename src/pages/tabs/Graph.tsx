@@ -38,7 +38,10 @@ import {
   Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-import { NetworkTablesTopic, NetworkTablesTypeInfos } from "ntcore-ts-client";
+import {
+  NetworkTablesTopic,
+  NetworkTablesTypeInfos,
+} from "ntcore-ts-client-monorepo/packages/ntcore-ts-client/src/index";
 import {
   lastTopicValues,
   listenerStates,
